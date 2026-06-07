@@ -53,10 +53,10 @@
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;}
   .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:21px;letter-spacing:-.3px;}
   .brand .logo{
-    width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-    background:linear-gradient(135deg,var(--jump1),var(--jump2));box-shadow:0 6px 16px rgba(255,94,126,.4);
+    width:40px;height:40px;border-radius:12px;display:grid;place-items:center;overflow:hidden;
+    background:#FFF6EA;box-shadow:0 6px 16px rgba(255,58,91,.28);
   }
-  .brand .logo canvas{width:30px;height:30px;}
+  .brand .logo .berry{width:100%;height:100%;display:block;}
   .iconbtn{
     width:44px;height:44px;border-radius:14px;border:none;cursor:pointer;
     background:var(--card);box-shadow:var(--shadow);font-size:20px;
@@ -207,7 +207,7 @@
   .sheet h3{font-size:22px;font-weight:850;margin:0 0 14px;letter-spacing:-.3px;}
   .setrow{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-top:1px solid var(--line);}
   .setrow .lab{font-weight:800;font-size:17px;}
-  .setrow .lab small{display:block;font-weight:600;font-size:12.5px;color:var(--ink2);margin-top:1px;}
+  .lab small{display:block;font-weight:600;font-size:12.5px;color:var(--ink2);margin-top:1px;}
   .toggle{width:56px;height:32px;border-radius:18px;background:#DDD8E8;position:relative;cursor:pointer;flex:none;transition:background .25s;}
   .toggle::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .25s;}
   .toggle.on{background:#23C77E;}
@@ -229,6 +229,29 @@
   .confirm-card .row{display:flex;gap:10px;}
   .confirm-card .row .btn{flex:1;font-size:16px;padding:15px;}
 
+  /* ---------- BROWSE ---------- */
+  .browse-sub{font-size:13px;font-weight:700;color:var(--ink2);margin:2px 4px 2px;}
+  .browse-list{flex:1;overflow-y:auto;margin:6px -4px 0;padding:2px 4px 10px;}
+  .browse-cat{display:flex;align-items:center;gap:9px;font-weight:850;font-size:13px;letter-spacing:.6px;
+    text-transform:uppercase;color:var(--ink);margin:16px 6px 9px;}
+  .browse-cat .cdot{width:15px;height:15px;border-radius:5px;flex:none;}
+  .browse-cat .ccount{font-weight:700;font-size:11.5px;color:var(--ink3);letter-spacing:0;text-transform:none;}
+  .brow{display:flex;align-items:center;gap:13px;background:var(--card);border-radius:18px;
+    padding:11px 13px;margin-bottom:8px;box-shadow:var(--shadow);}
+  .brow .bemo{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex:none;}
+  .brow .bemo canvas{width:40px;height:40px;}
+  .brow .btxt{flex:1;min-width:0;}
+  .brow .bnm{font-weight:850;font-size:16px;letter-spacing:-.2px;display:flex;align-items:center;gap:8px;}
+  .brow .bin{font-size:12.5px;color:var(--ink2);font-weight:600;margin-top:3px;line-height:1.3;}
+  .brow .bdur{font-weight:850;font-size:18px;letter-spacing:-.5px;flex:none;text-align:right;line-height:1;}
+  .brow .bdur small{display:block;font-size:9.5px;font-weight:800;color:var(--ink3);letter-spacing:.6px;margin-top:2px;text-transform:uppercase;}
+  .intens{display:inline-flex;gap:3px;flex:none;}
+  .intens i{width:6px;height:6px;border-radius:50%;display:inline-block;}
+  .rowbtn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:15px 0;
+    border:none;border-top:1px solid var(--line);background:none;cursor:pointer;font-family:inherit;color:inherit;text-align:left;}
+  .rowbtn:active{opacity:.6;}
+  .rowbtn .chev{width:20px;height:20px;color:var(--ink3);flex:none;}
+
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:60;}
 </style>
 </head>
@@ -238,7 +261,7 @@
   <!-- ============ HOME ============ -->
   <section id="home" class="screen">
     <div class="topbar">
-      <div class="brand"><span class="logo"><canvas id="logoFig" class="fig" width="32" height="32"></canvas></span><span id="brandName">Move Snacks</span></div>
+      <div class="brand"><span class="logo"><svg class="berry" viewBox="0 0 16 16" shape-rendering="crispEdges" aria-hidden="true"><rect width="16" height="16" fill="#FFF6EA"/><g fill="#FF3A5B"><rect x="5" y="6" width="6" height="1"/><rect x="4" y="7" width="8" height="2"/><rect x="5" y="9" width="6" height="2"/><rect x="6" y="11" width="4" height="1"/><rect x="7" y="12" width="2" height="1"/></g><g fill="#43C46B"><rect x="7" y="3" width="2" height="1"/><rect x="6" y="4" width="4" height="1"/><rect x="5" y="5" width="6" height="1"/></g><g fill="#FFD23E"><rect x="6" y="7" width="1" height="1"/><rect x="9" y="7" width="1" height="1"/><rect x="5" y="8" width="1" height="1"/><rect x="8" y="8" width="1" height="1"/><rect x="7" y="10" width="1" height="1"/></g></svg></span><span id="brandName">Move Snacks</span></div>
       <button class="iconbtn" id="btnSettings" aria-label="Settings">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2.4" fill="#fff"/><circle cx="15" cy="12" r="2.4" fill="#fff"/><circle cx="8" cy="17" r="2.4" fill="#fff"/></svg>
       </button>
@@ -374,6 +397,16 @@
     </div>
   </section>
 
+  <!-- ============ BROWSE ALL MOVES ============ -->
+  <section id="browse" class="screen">
+    <div class="topbar">
+      <div style="font-weight:850;font-size:22px;letter-spacing:-.3px;">All Moves</div>
+      <button class="iconbtn" id="brClose" aria-label="Back to home"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="browse-sub" id="brSub"></div>
+    <div class="browse-list" id="browseList"></div>
+  </section>
+
 </div>
 
 <!-- settings sheet -->
@@ -391,6 +424,10 @@
         <button data-diff="spicy"><span class="dot2" style="background:#FF4D6D"></span>Spicy</button>
       </div>
     </div>
+    <button class="rowbtn" id="btnBrowse">
+      <div class="lab">See all moves<small>Browse every exercise &amp; its time</small></div>
+      <svg class="ic chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
     <button class="linkbtn" id="btnReset">Reset my progress</button>
     <div class="about">Move Snacks · quick movement breaks for busy kids<br>No equipment needed.</div>
   </div>
@@ -434,11 +471,11 @@ const colOf = c => CATS[c].col;
    p = pixel-art pose id (see POSES), s = work seconds, q = intensity (1 calm·2 moderate·3 vigorous) */
 const EX = [
   {n:"Star Jumps",p:"jack",c:"jump",q:3,s:30,i:"Jump up big and wide like a star — keep going!"},
-  {n:"Tuck Jumps",p:"tuck",c:"jump",q:3,s:30,i:"Jump and pull your knees up high — about 12 jumps!"},
+  {n:"Tuck Jumps",p:"tuck",c:"jump",q:3,s:25,i:"Jump and pull your knees up high — about 10 jumps!"},
   {n:"Broad Jumps",p:"broad",c:"jump",q:3,s:35,i:"Leap forward as far as you can, turn around, go back!"},
   {n:"Pogo Hops",p:"pogo",c:"jump",q:2,s:40,i:"Bounce on your tippy toes, light and springy!"},
   {n:"Skater Hops",p:"skater",c:"jump",q:3,s:30,i:"Leap side to side and stick each landing!"},
-  {n:"Squat Jumps",p:"squatjump",c:"jump",q:3,s:30,i:"Squat low, then jump up tall — about 10 times!"},
+  {n:"Squat Jumps",p:"squatjump",c:"jump",q:3,s:25,i:"Squat low, then jump up tall — about 8 times!"},
   {n:"Line Hops",p:"pogo",c:"jump",q:2,s:35,i:"Hop side to side over a pretend line — fast feet!"},
   {n:"Bear Crawl",p:"bear",c:"animal",q:2,s:45,i:"Crawl on hands and feet across the room and back!"},
   {n:"Crab Walk",p:"crab",c:"animal",q:2,s:45,i:"Belly up — crab walk forward, then walk back!"},
@@ -448,34 +485,34 @@ const EX = [
   {n:"Inchworm",p:"inchworm",c:"animal",q:1,s:40,i:"Walk your hands out to a plank, walk feet in — repeat!"},
   {n:"Duck Walk",p:"gorilla",c:"animal",q:2,s:35,i:"Squat low and waddle across the room and back!"},
   {n:"Crab Kicks",p:"crab",c:"animal",q:2,s:35,i:"In crab pose, kick one leg up, then the other!"},
-  {n:"Cheetah Run",p:"run",c:"animal",q:3,s:30,i:"Run in place as fast as a cheetah!"},
+  {n:"Cheetah Run",p:"run",c:"animal",q:3,s:25,i:"Run in place as fast as a cheetah!"},
   {n:"Stair Climbs",p:"climb",c:"stairs",q:2,s:45,i:"Walk up and down the stairs, steady and safe!"},
-  {n:"Toe Taps",p:"climb",c:"stairs",q:3,s:35,i:"Tap your toes on the bottom step, fast as you can!"},
+  {n:"Toe Taps",p:"climb",c:"stairs",q:3,s:30,i:"Tap your toes on the bottom step, fast as you can!"},
   {n:"Two-Step Hops",p:"climb",c:"stairs",q:3,s:35,i:"Hop up two steps, walk down — hold the rail!"},
   {n:"Bear Stairs",p:"bear",c:"stairs",q:2,s:40,i:"Crawl up the stairs like a bear, then walk down!"},
   {n:"Stair Sprints",p:"run",c:"stairs",q:3,s:35,i:"Run up, walk down — and repeat!"},
   {n:"Squats",p:"squat",c:"strength",q:2,s:40,i:"Sit back like a chair and stand — about 12 squats!"},
-  {n:"Wall Sit",p:"wallsit",c:"strength",q:2,s:30,i:"Hold your invisible chair against the wall!"},
-  {n:"Knee Push-Ups",p:"pushup",c:"strength",q:2,s:35,i:"Push up and down from your knees — about 8!"},
-  {n:"Superman",p:"superman",c:"strength",q:1,s:30,i:"On your belly, lift arms and legs — hold and fly!"},
-  {n:"Lunges",p:"lunge",c:"strength",q:2,s:40,i:"Step forward and bend — about 5 on each leg!"},
-  {n:"Calf Raises",p:"calf",c:"strength",q:1,s:30,i:"Push up on tippy toes and down — about 15!"},
-  {n:"Plank",p:"plank",c:"strength",q:2,s:30,i:"Hold strong and flat like a board!"},
-  {n:"High Knees",p:"run",c:"cardio",q:3,s:35,i:"Run on the spot, lifting your knees up high!"},
-  {n:"Jumping Jacks",p:"jack",c:"cardio",q:3,s:35,i:"Arms and legs jump out and in — find a rhythm!"},
+  {n:"Wall Sit",p:"wallsit",c:"strength",q:2,s:25,i:"Hold your invisible chair against the wall!"},
+  {n:"Knee Push-Ups",p:"pushup",c:"strength",q:2,s:30,i:"Push up and down from your knees — about 8!"},
+  {n:"Superman",p:"superman",c:"strength",q:1,s:25,i:"On your belly, lift arms and legs — hold and fly!"},
+  {n:"Lunges",p:"lunge",c:"strength",q:2,s:35,i:"Step forward and bend — about 5 on each leg!"},
+  {n:"Calf Raises",p:"calf",c:"strength",q:1,s:35,i:"Push up on tippy toes and down — keep going!"},
+  {n:"Plank",p:"plank",c:"strength",q:2,s:25,i:"Hold strong and flat like a board!"},
+  {n:"High Knees",p:"run",c:"cardio",q:3,s:30,i:"Run on the spot, lifting your knees up high!"},
+  {n:"Jumping Jacks",p:"jack",c:"cardio",q:3,s:30,i:"Arms and legs jump out and in — find a rhythm!"},
   {n:"Mountain Climbers",p:"climber",c:"cardio",q:3,s:30,i:"Hands on the floor, run your knees in fast!"},
-  {n:"Fast Feet",p:"run",c:"cardio",q:3,s:30,i:"Tiny super-fast steps, stay light on your toes!"},
+  {n:"Fast Feet",p:"run",c:"cardio",q:3,s:25,i:"Tiny super-fast steps, stay light on your toes!"},
   {n:"Shadow Boxing",p:"box",c:"cardio",q:2,s:45,i:"Punch the air — left, right, left, right!"},
   {n:"Speed Skaters",p:"skater",c:"cardio",q:3,s:30,i:"Big slides side to side, swing your arms!"},
-  {n:"Flamingo Stand",p:"flamingo",c:"balance",q:1,s:35,i:"Stand on one leg… switch halfway. Stay still!"},
+  {n:"Flamingo Stand",p:"flamingo",c:"balance",q:1,s:30,i:"Stand on one leg… switch halfway. Stay still!"},
   {n:"Line Walk",p:"linewalk",c:"balance",q:1,s:35,i:"Walk heel-to-toe along a line, slow and steady!"},
   {n:"Airplane",p:"airplane",c:"balance",q:1,s:30,i:"Arms out like wings — lean and balance, then switch!"},
-  {n:"Spin & Freeze",p:"spin",c:"balance",q:2,s:30,i:"Spin around slow, then FREEZE super still!"},
+  {n:"Spin & Freeze",p:"spin",c:"balance",q:2,s:35,i:"Spin around slow, then FREEZE super still!"},
   {n:"Tree Pose",p:"flamingo",c:"balance",q:1,s:30,i:"Stand tall and still like a strong tree — switch legs!"},
-  {n:"Sit-Ups",p:"situp",c:"core",q:2,s:40,i:"Lie down, then sit all the way up — about 10!"},
+  {n:"Sit-Ups",p:"situp",c:"core",q:2,s:35,i:"Lie down, then sit all the way up — about 10!"},
   {n:"Bicycle Legs",p:"bicycle",c:"core",q:2,s:40,i:"On your back, pedal a bike — keep pedalling!"},
-  {n:"Dead Bug",p:"deadbug",c:"core",q:1,s:35,i:"On your back, reach opposite arm and leg, slow!"},
-  {n:"Boat Hold",p:"boat",c:"core",q:2,s:30,i:"Balance in a V shape like a boat — hold it!"},
+  {n:"Dead Bug",p:"deadbug",c:"core",q:1,s:40,i:"On your back, reach opposite arm and leg, slow!"},
+  {n:"Boat Hold",p:"boat",c:"core",q:2,s:20,i:"Balance in a V shape like a boat — hold it!"},
   {n:"Freeze Dance",p:"dance",c:"dance",q:2,s:60,i:"Dance wild… then FREEZE! Then dance again!"},
   {n:"Dance Party",p:"dance",c:"dance",q:2,s:60,i:"Show off your very best dance moves!"},
   {n:"Wiggle Worm",p:"dance",c:"dance",q:1,s:45,i:"Wiggle every single part of you, head to toes!"},
@@ -646,7 +683,6 @@ const ICON_PLAY='<svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d
 function renderHome(){
   stopFig();
   $("brandName").textContent=APP_NAME;
-  figFill($("logoFig"),"cheer",0,"#FFFFFF");
   const isToday=stats.day===todayStr();
   const today=isToday?stats.todayCount:0;
   const streakValid=(stats.day===todayStr()||stats.day===yesterdayStr());
@@ -666,6 +702,40 @@ function renderHome(){
   shelf.style.display=buddies.length?"flex":"none";
   document.querySelectorAll(".size").forEach(el=>el.classList.toggle("sel",+el.dataset.count===state.count));
 }
+
+/* ============ BROWSE ALL MOVES ============ */
+function renderBrowse(){
+  const list=$("browseList"); list.innerHTML="";
+  $("brSub").textContent=EX.length+" moves · "+Object.keys(CATS).length+" kinds · times shown at Medium";
+  Object.keys(CATS).forEach(cat=>{
+    const exs=EX.filter(e=>e.c===cat); if(!exs.length)return;
+    const col=colOf(cat);
+    const head=document.createElement("div"); head.className="browse-cat";
+    head.innerHTML='<span class="cdot"></span><span class="clab"></span><span class="ccount"></span>';
+    head.querySelector(".cdot").style.background="linear-gradient(135deg,"+col[0]+","+col[1]+")";
+    head.querySelector(".clab").textContent=CATS[cat].label;
+    head.querySelector(".ccount").textContent="· "+exs.length;
+    list.appendChild(head);
+    exs.forEach(ex=>{
+      const row=document.createElement("div"); row.className="brow";
+      const tile=document.createElement("div"); tile.className="bemo";
+      tile.style.background="linear-gradient(135deg,"+col[0]+","+col[1]+")";
+      const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; tile.appendChild(cv);
+      const txt=document.createElement("div"); txt.className="btxt";
+      txt.innerHTML='<div class="bnm"><span class="bnmn"></span><span class="intens"></span></div><div class="bin"></div>';
+      txt.querySelector(".bnmn").textContent=ex.n;
+      const intens=txt.querySelector(".intens");
+      for(let k=1;k<=3;k++){const i=document.createElement("i");i.style.background=k<=ex.q?col[0]:"#DDD8E8";intens.appendChild(i);}
+      txt.querySelector(".bin").textContent=ex.i;
+      const dur=document.createElement("div"); dur.className="bdur"; dur.innerHTML=ex.s+"<small>sec</small>";
+      row.appendChild(tile); row.appendChild(txt); row.appendChild(dur);
+      list.appendChild(row);
+      figFill(cv,ex.p,0,"#FFFFFF");
+    });
+  });
+  list.scrollTop=0;
+}
+function openBrowse(){ stopFig(); renderBrowse(); show("browse"); }
 
 /* ============ PACK GENERATION ============ */
 function makePack(n){
@@ -883,6 +953,8 @@ $("settingsOverlay").addEventListener("click",e=>{if(e.target===$("settingsOverl
 $("tgVoice").addEventListener("click",()=>{state.voice=!state.voice;store("voice",state.voice);syncSettings();if(state.voice)speak("Hi! I'm your coach.");buzz(15);});
 $("tgSound").addEventListener("click",()=>{state.sound=!state.sound;store("sound",state.sound);syncSettings();if(state.sound)beep("ding");buzz(15);});
 document.querySelectorAll("#segDiff button").forEach(b=>{ b.addEventListener("click",()=>{state.diff=b.dataset.diff;store("diff",state.diff);syncSettings();beep("tick");buzz(15);}); });
+$("btnBrowse").addEventListener("click",()=>{beep("tick");closeSettings();openBrowse();});
+$("brClose").addEventListener("click",()=>{beep("tick");show("home");});
 $("btnReset").addEventListener("click",()=>{ closeSettings(); askConfirm("Reset everything?","This clears your streak, moves and buddies.","Reset",()=>{ stats={day:null,todayCount:0,streak:0,total:0,count:0,buddies:[]};store("stats",stats);renderHome(); }); });
 
 $("cfNo").addEventListener("click",closeConfirm);
