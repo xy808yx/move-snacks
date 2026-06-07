@@ -1,0 +1,16 @@
+{
+  "name": "Move Snacks",
+  "short_name": "Move Snacks",
+  "description": "Quick movement snacks for kids — randomized 3, 5, or 7 exercise bursts to break up sitting.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FDF4FF",
+  "theme_color": "#FF5E7E",
+  "icons": [
+    { "src": "favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
