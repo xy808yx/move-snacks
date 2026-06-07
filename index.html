@@ -214,6 +214,14 @@
   .seg button.on{background:linear-gradient(135deg,var(--jump1),var(--jump2));color:#fff;box-shadow:0 6px 14px rgba(255,94,126,.35);}
   .linkbtn{background:none;border:none;font-family:inherit;font-weight:800;font-size:15px;color:#FF5E7E;cursor:pointer;padding:14px 0 4px;}
   .sheet .about{font-size:12.5px;color:var(--ink3);font-weight:600;text-align:center;padding-top:10px;line-height:1.5;}
+  [hidden]{display:none!important;}   /* the bare hidden attr loses to .setrow/.voicetip display rules without this */
+  .voicepick{display:flex;gap:8px;align-items:center;}
+  #selVoice{flex:1;min-width:0;font-family:inherit;font-weight:700;font-size:15px;color:var(--ink);
+    padding:11px 12px;border-radius:13px;border:1px solid var(--line);background:#F2F0F8;cursor:pointer;-webkit-appearance:none;appearance:none;}
+  .voicetest{flex:none;border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:14px;
+    padding:11px 16px;border-radius:13px;background:linear-gradient(135deg,var(--jump1),var(--jump2));color:#fff;box-shadow:0 6px 14px rgba(255,94,126,.3);}
+  .voicetest:active{opacity:.7;}
+  .voicetip{display:block;font-size:12.5px;font-weight:600;color:var(--ink2);line-height:1.45;background:#FFF6E9;border-radius:12px;padding:10px 12px;}
 
   .confirm-card{background:#fff;border-radius:28px;padding:26px 24px 22px;max-width:330px;margin:auto;text-align:center;
     transform:scale(.85);transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:var(--shadow-lg);}
@@ -370,12 +378,17 @@
   <!-- ============ DONE ============ -->
   <section id="done" class="screen">
     <div class="done-berry" id="doneBerry" aria-hidden="true">
-      <svg viewBox="0 0 16 16" shape-rendering="crispEdges">
-        <g fill="#3FB664"><rect x="7" y="3" width="2" height="1"/><rect x="6" y="4" width="4" height="1"/><rect x="5" y="5" width="6" height="1"/></g>
-        <g fill="#FF4D6D"><rect x="5" y="6" width="6" height="1"/><rect x="4" y="7" width="8" height="1"/><rect x="4" y="8" width="8" height="1"/><rect x="4" y="9" width="8" height="1"/><rect x="5" y="10" width="6" height="1"/><rect x="6" y="11" width="4" height="1"/><rect x="7" y="12" width="2" height="1"/></g>
-        <g fill="#FFE08A"><rect x="6" y="7" width="1" height="1"/><rect x="9" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="11" y="8" width="1" height="1"/></g>
-        <g fill="#FF9DB0"><rect x="5" y="9" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/></g>
-        <g fill="#3A1E2A"><rect x="6" y="8" width="1" height="1"/><rect x="9" y="8" width="1" height="1"/><rect x="6" y="10" width="1" height="1"/><rect x="9" y="10" width="1" height="1"/><rect x="7" y="11" width="1" height="1"/><rect x="8" y="11" width="1" height="1"/></g>
+      <svg viewBox="0 0 20 18" shape-rendering="crispEdges">
+        <g fill="#43C46B"><rect x="9" y="1" width="2" height="1"/><rect x="4" y="2" width="2" height="1"/><rect x="9" y="2" width="2" height="1"/><rect x="14" y="2" width="2" height="1"/><rect x="2" y="3" width="16" height="1"/><rect x="4" y="4" width="12" height="1"/></g>
+        <g fill="#2FA854"><rect x="9" y="0" width="2" height="1"/><rect x="8" y="1" width="1" height="1"/><rect x="11" y="1" width="1" height="1"/><rect x="8" y="2" width="1" height="1"/><rect x="11" y="2" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="16" y="4" width="1" height="1"/></g>
+        <g fill="#FF4D6D"><rect x="2" y="5" width="1" height="1"/><rect x="5" y="5" width="13" height="1"/><rect x="1" y="6" width="2" height="1"/><rect x="4" y="6" width="12" height="1"/><rect x="17" y="6" width="2" height="1"/><rect x="1" y="7" width="4" height="1"/><rect x="7" y="7" width="6" height="1"/><rect x="15" y="7" width="4" height="1"/><rect x="1" y="8" width="1" height="1"/><rect x="3" y="8" width="2" height="1"/><rect x="7" y="8" width="6" height="1"/><rect x="15" y="8" width="2" height="1"/><rect x="18" y="8" width="1" height="1"/><rect x="2" y="9" width="1" height="1"/><rect x="5" y="9" width="10" height="1"/><rect x="17" y="9" width="1" height="1"/><rect x="2" y="10" width="1" height="1"/><rect x="5" y="10" width="3" height="1"/><rect x="9" y="10" width="2" height="1"/><rect x="12" y="10" width="3" height="1"/><rect x="17" y="10" width="1" height="1"/><rect x="3" y="11" width="5" height="1"/><rect x="12" y="11" width="5" height="1"/><rect x="4" y="12" width="2" height="1"/><rect x="7" y="12" width="2" height="1"/><rect x="11" y="12" width="2" height="1"/><rect x="14" y="12" width="2" height="1"/><rect x="5" y="13" width="3" height="1"/><rect x="9" y="13" width="2" height="1"/><rect x="12" y="13" width="3" height="1"/><rect x="6" y="14" width="3" height="1"/><rect x="10" y="14" width="4" height="1"/><rect x="7" y="15" width="6" height="1"/><rect x="8" y="16" width="4" height="1"/><rect x="9" y="17" width="2" height="1"/></g>
+        <g fill="#FF859C"><rect x="3" y="5" width="2" height="1"/><rect x="3" y="6" width="1" height="1"/></g>
+        <g fill="#FFE08A"><rect x="16" y="6" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="17" y="8" width="1" height="1"/><rect x="6" y="12" width="1" height="1"/><rect x="13" y="12" width="1" height="1"/><rect x="8" y="13" width="1" height="1"/><rect x="11" y="13" width="1" height="1"/><rect x="9" y="14" width="1" height="1"/></g>
+        <g fill="#FF9DB0"><rect x="3" y="9" width="2" height="1"/><rect x="15" y="9" width="2" height="1"/><rect x="3" y="10" width="2" height="1"/><rect x="15" y="10" width="2" height="1"/></g>
+        <g fill="#3A1E2A"><rect x="6" y="7" width="1" height="1"/><rect x="14" y="7" width="1" height="1"/><rect x="5" y="8" width="2" height="1"/><rect x="13" y="8" width="2" height="1"/><rect x="8" y="10" width="1" height="1"/><rect x="11" y="10" width="1" height="1"/><rect x="8" y="11" width="4" height="1"/></g>
+        <g fill="#FF7A93"><rect x="9" y="12" width="2" height="1"/></g>
+        <g fill="#FFFFFF"><rect x="5" y="7" width="1" height="1"/><rect x="13" y="7" width="1" height="1"/><rect x="2" y="12" width="1" height="1"/><rect x="17" y="12" width="1" height="1"/></g>
+        <g fill="#FFC83D"><rect x="2" y="11" width="1" height="1"/><rect x="17" y="11" width="1" height="1"/><rect x="1" y="12" width="1" height="1"/><rect x="3" y="12" width="1" height="1"/><rect x="16" y="12" width="1" height="1"/><rect x="18" y="12" width="1" height="1"/><rect x="2" y="13" width="1" height="1"/><rect x="17" y="13" width="1" height="1"/></g>
       </svg>
     </div>
     <div class="done-h">Snack Crushed!</div>
@@ -408,6 +421,11 @@
     <div class="grip"></div>
     <h3>Settings</h3>
     <div class="setrow"><div class="lab">Coach voice<small>Reads moves out loud</small></div><div class="toggle" id="tgVoice"></div></div>
+    <div class="setrow" id="voiceRow" style="flex-direction:column;align-items:stretch;gap:10px;">
+      <div class="lab">Coach voice style<small>Pick the voice that sounds best on this device</small></div>
+      <div class="voicepick"><select id="selVoice" aria-label="Coach voice"></select><button class="voicetest" id="btnTestVoice" type="button">Test</button></div>
+      <small id="voiceTip" class="voicetip" hidden>Tip: for a much nicer coach, install a voice in Settings → Accessibility → Spoken Content → Voices (try “Ava” or “Samantha — Enhanced”), then pick it here.</small>
+    </div>
     <div class="setrow"><div class="lab">Sound effects<small>Beeps &amp; cheers</small></div><div class="toggle" id="tgSound"></div></div>
     <div class="setrow" style="flex-direction:column;align-items:stretch;gap:12px;">
       <div class="lab">How hard?<small>Changes how long each move lasts</small></div>
@@ -499,7 +517,6 @@ const EX = [
   {n:"Speed Skaters",p:"skater",c:"cardio",q:3,s:30,i:"Big slides side to side, swing your arms!"},
   {n:"Flamingo Stand",p:"flamingo",c:"balance",q:1,s:30,i:"Stand on one leg… switch halfway. Stay still!"},
   {n:"Line Walk",p:"linewalk",c:"balance",q:1,s:35,i:"Walk heel-to-toe along a line, slow and steady!"},
-  {n:"Airplane",p:"airplane",c:"balance",q:1,s:30,i:"Arms out like wings — lean and balance, then switch!"},
   {n:"Spin & Freeze",p:"spin",c:"balance",q:2,s:35,i:"Spin around slow, then FREEZE super still!"},
   {n:"Tree Pose",p:"flamingo",c:"balance",q:1,s:30,i:"Stand tall and still like a strong tree — switch legs!"},
   {n:"Sit-Ups",p:"situp",c:"core",q:2,s:35,i:"Lie down, then sit all the way up — about 10!"},
@@ -523,6 +540,7 @@ const C = 2 * Math.PI * 95;
    angles: 0=right 90=up 180=left 270=down
    ============================================================ */
 const FIG_S = 32;
+const FIG_MARGIN = 2.5;  /* breathing room so no pose clips (covers limb half-thickness + shadow) */
 const SEG = {torso:8, neck:1.5, head:3, upper:4.5, fore:4, thigh:5.5, shin:5.5};
 const rad = d => d*Math.PI/180;
 const pp = (o,deg,len) => [o[0]+Math.cos(rad(deg))*len, o[1]-Math.sin(rad(deg))*len];
@@ -550,8 +568,10 @@ function thick(d,x0,y0,x1,y1,c,t){
 }
 /* palette derived from one category hex — keeps every pose pixel-safe */
 function figPalette(hex){const base=hexRgb(hex);return {base,dark:shade(base,-0.30),light:shade(base,0.45),skin:[255,211,166],ink:[31,27,43]};}
-function drawFig(d,J,pal){
+function drawFig(d,J,pal,fit){
   const base=pal.base,dark=pal.dark,light=pal.light,skin=pal.skin,ink=pal.ink;
+  /* fit transform: centre the pose in the buffer & shrink only if needed so nothing ever clips */
+  const {s,ox,oy}=fit; for(const k in J) J[k]=[J[k][0]*s+ox, J[k][1]*s+oy];
   const ln=(p,q,c,t)=>thick(d,p[0],p[1],q[0],q[1],c,t);
   /* 1px dark shadow offset under the right-side limbs (cheap dimensional shading) */
   const sh=(p,q)=>thick(d,p[0]+1,p[1]+1,q[0]+1,q[1]+1,dark,3);
@@ -563,7 +583,7 @@ function drawFig(d,J,pal){
   ln(J.chest,J.elL,base,3); ln(J.elL,J.haL,base,3);
   ln(J.chest,J.elR,base,3); ln(J.elR,J.haR,base,3);
   /* head + top-left highlight */
-  disk(d,J.head[0],J.head[1],SEG.head,base);
+  disk(d,J.head[0],J.head[1],SEG.head*s,base);
   setPx(d,J.head[0]-1,J.head[1]-2,light);
   /* skin dots at hands & feet */
   [J.haL,J.haR,J.ftL,J.ftR].forEach(p=>setPx(d,p[0],p[1],skin));
@@ -606,7 +626,6 @@ const POSES = {
   box:[[16,16,0, 26,26, 82,140, 266,266, 274,274],[16,16,0, 82,138, 98,142, 266,266, 274,274],[16,16,0, 100,158, 154,154, 266,266, 274,274]],
   flamingo:[[16,16,0, 205,205, 335,335, 232,70, 272,272],[16,16,2, 208,208, 332,332, 234,66, 271,271]],
   linewalk:[[16,17,0, 178,178, 2,2, 250,250, 290,290],[16,17,0, 178,178, 2,2, 286,286, 256,256]],
-  airplane:[[16,14,-74, 232,232, 232,232, 250,250, 8,8],[16,14,-78, 230,230, 230,230, 252,252, 6,6]],
   spin:[[16,16,0, 170,170, 10,10, 264,264, 276,276],[16,16,0, 200,150, 340,30, 268,272, 272,268]],
   situp:[[14,20,-70, 250,250, 250,250, 20,120, 20,120],[15,19,-20, 300,300, 300,300, 18,118, 18,118]],
   bicycle:[[17,19,86, 250,250, 250,250, 55,120, 30,300],[17,19,86, 250,250, 250,250, 42,300, 42,140],[17,19,86, 250,250, 250,250, 30,300, 55,120]],
@@ -617,12 +636,28 @@ const POSES = {
   cheer:[[16,17,0, 125,125, 55,55, 256,256, 284,284],[16,14,0, 132,150, 48,30, 250,250, 290,290]],
 };
 
+/* per-pose fit: centre each pose in the buffer & shrink only if it would overflow, so nothing clips */
+const FIT={};
+function computeFit(frames){
+  let mnX=1e9,mnY=1e9,mxX=-1e9,mxY=-1e9;
+  frames.forEach(f=>{const J=buildPose(f);
+    for(const k in J){const p=J[k]; if(p[0]<mnX)mnX=p[0]; if(p[0]>mxX)mxX=p[0]; if(p[1]<mnY)mnY=p[1]; if(p[1]>mxY)mxY=p[1];}
+    mnX=Math.min(mnX,J.head[0]-SEG.head); mxX=Math.max(mxX,J.head[0]+SEG.head);
+    mnY=Math.min(mnY,J.head[1]-SEG.head); mxY=Math.max(mxY,J.head[1]+SEG.head);
+  });
+  mnX-=FIG_MARGIN;mnY-=FIG_MARGIN;mxX+=FIG_MARGIN;mxY+=FIG_MARGIN;
+  const w=mxX-mnX,h=mxY-mnY,s=Math.min(1,FIG_S/Math.max(w,h));
+  /* bias up-left ~0.6px so the unscaled down-right drop-shadow doesn't clip the bottom edge (ample top/left room) */
+  return {s, ox:(FIG_S-(mnX+mxX)*s)/2-0.6, oy:(FIG_S-(mnY+mxY)*s)/2-0.6};
+}
+function fitFor(pose){ return FIT[pose]||(FIT[pose]=computeFit(POSES[pose]||POSES.stand)); }
+
 function figFill(canvas, poseId, frame, hex){
   const ctx=canvas.getContext('2d');
   const fr=POSES[poseId]||POSES.stand;
   const f=fr[frame % fr.length];
   const img=ctx.createImageData(FIG_S,FIG_S);
-  drawFig(img.data, buildPose(f), figPalette(hex));
+  drawFig(img.data, buildPose(f), figPalette(hex), fitFor(poseId));
   ctx.clearRect(0,0,FIG_S,FIG_S);
   ctx.putImageData(img,0,0);
 }
@@ -643,7 +678,7 @@ function figFillLerp(cv,pose,hex,u){
     f=a.map((v,j)=>v+(b[j]-v)*e);
   }
   const img=ctx.createImageData(FIG_S,FIG_S);
-  drawFig(img.data, buildPose(f), figPalette(hex));
+  drawFig(img.data, buildPose(f), figPalette(hex), fitFor(pose));
   ctx.clearRect(0,0,FIG_S,FIG_S);
   ctx.putImageData(img,0,0);
 }
@@ -652,7 +687,7 @@ let figRAF=null, figCv=null, figPose=null, figHex=null, figLast=0, figT=0, figSp
 const FIG_CYCLE_MS=820;
 /* per-pose tempo: >1 faster, <1 slower (default 1) */
 const POSE_TEMPO={ run:1.8, climber:1.6, jack:1.4, pogo:1.45, box:1.55, bicycle:1.4, tuck:1.35, squatjump:1.25, skater:1.15, dance:1.1, gorilla:1.15, crab:1.1,
-  flamingo:0.55, airplane:0.55, deadbug:0.5, linewalk:0.6, plank:0.5, wallsit:0.5, superman:0.55, calf:0.75, boat:0.55, spin:0.7, inchworm:0.7, situp:0.85, lunge:0.85, robot:0.9 };
+  flamingo:0.55, deadbug:0.5, linewalk:0.6, plank:0.5, wallsit:0.5, superman:0.55, calf:0.75, boat:0.55, spin:0.7, inchworm:0.7, situp:0.85, lunge:0.85, robot:0.9 };
 function startFig(cv,pose,hex){
   stopFig(); figCv=cv;figPose=pose;figHex=hex; figT=0; figSpeed=1; figTempo=POSE_TEMPO[pose]||1; /* surge re-applies after this */
   if(reduceMotion()){ figFill(cv,pose,0,hex); return; } /* static but still cute */
@@ -667,7 +702,7 @@ const PFX = "movesnacks_";
 function store(k,v){try{localStorage.setItem(PFX+k,JSON.stringify(v));}catch(e){}}
 function load(k,d){try{const v=localStorage.getItem(PFX+k);return v==null?d:JSON.parse(v);}catch(e){return d;}}
 
-let state = { count:load("count",5), diff:load("diff","medium"), sound:load("sound",true), voice:load("voice",true), pack:[], idx:0, surgeIdx:-1, surgeFired:false };
+let state = { count:load("count",5), diff:load("diff","medium"), sound:load("sound",true), voice:load("voice",true), voiceName:load("voiceName",null), pack:[], idx:0, surgeIdx:-1, surgeFired:false };
 let stats = load("stats",{day:null,todayCount:0});
 
 /* ---------- dates ---------- */
@@ -715,21 +750,38 @@ const FINISH=["You're a movement superstar!","Your body says thank you!","Brain 
 let voices=[], bestVoice=null, lastSpeakAt=0;
 /* unintelligible / joke voices to never auto-pick (mostly classic macOS; protects fallback) */
 const VOICE_BAD=/bahh|bells|boing|bubbles|cellos|jester|organ|trinoids|wobble|whisper|bad news|good news|albert|fred|ralph|zarvox|hysterical|deranged|pipe|superstar|wheez/i;
+const vName = v => (v.name+" "+(v.voiceURI||"")).toLowerCase();
+const enVoices = () => voices.filter(v=>v.lang&&/^en/i.test(v.lang));
 function chooseVoice(){
-  const en=voices.filter(v=>v.lang&&/^en/i.test(v.lang));
+  const en=enVoices();
   if(!en.length){bestVoice=voices[0]||null;return;}
-  const score=v=>{const n=(v.name+" "+(v.voiceURI||"")).toLowerCase();if(VOICE_BAD.test(n))return -100;let s=0;
-    if(/junior/.test(n))s+=60;            /* a young/kid voice = playful + clear */
+  if(state.voiceName){const saved=en.find(v=>v.name===state.voiceName)||voices.find(v=>v.name===state.voiceName); if(saved){bestVoice=saved;return;}}
+  const score=v=>{const n=vName(v);if(VOICE_BAD.test(n))return -100;let s=0;
     if(/siri/.test(n))s+=52;
     if(/premium|enhanced/.test(n))s+=46;
+    if(/compact/.test(n))s-=50;           /* low-quality robotic Apple voice */
     if(/samantha|ava|allison|susan|zoe|nicky|sandy|shelley|flo|karen|moira|tessa|kathy/.test(n))s+=26;
     if(/google us english|google uk english female/.test(n))s+=22;
     if(/female/.test(n))s+=8; if(v.localService)s+=5; if(/en-us/i.test(v.lang))s+=5; if(v.default)s+=2;
     return s;};
   en.sort((a,b)=>score(b)-score(a));
-  bestVoice = score(en[0])>0 ? en[0] : (en.find(v=>v.default)||en[0]);
+  bestVoice = score(en[0])>-100 ? en[0] : (en.find(v=>v.default)||en[0]);
 }
-function loadVoices(){try{voices=speechSynthesis.getVoices();}catch(e){} chooseVoice();}
+function loadVoices(){try{voices=speechSynthesis.getVoices();}catch(e){} chooseVoice(); populateVoices();}
+function voiceTag(v){const n=vName(v);
+  if(/premium/.test(n))return"Premium"; if(/enhanced/.test(n))return"Enhanced";
+  if(/siri/.test(n))return"Siri"; if(/compact/.test(n))return"Compact"; return"";}
+function populateVoices(){
+  const sel=$("selVoice"); if(!sel||!$("settingsOverlay").classList.contains("on"))return; /* only build the list while the sheet is open */
+  const en=enVoices().filter(v=>!VOICE_BAD.test(vName(v)));
+  sel.innerHTML="";
+  if(!en.length){const o=document.createElement("option");o.value="";o.textContent="Default voice";sel.appendChild(o);}
+  en.forEach(v=>{const o=document.createElement("option");const tag=voiceTag(v);
+    o.value=v.name; o.textContent=v.name+(tag?" · "+tag:""); sel.appendChild(o);});
+  if(bestVoice)sel.value=bestVoice.name;
+  const tip=$("voiceTip");
+  if(tip)tip.hidden = en.some(v=>["Premium","Enhanced","Siri"].includes(voiceTag(v))) || !en.length;
+}
 function speak(text,opt){
   if(!state.voice||!("speechSynthesis"in window))return;
   opt=opt||{};
@@ -737,7 +789,7 @@ function speak(text,opt){
   if(!opt.critical && now-lastSpeakAt<1200) return; /* throttle non-critical cheers */
   lastSpeakAt=now;
   try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);
-    u.rate=opt.rate||1.04; u.pitch=opt.pitch||1.4; u.volume=1;  /* high pitch = playful/cartoony */
+    u.rate=opt.rate||1.02; u.pitch=opt.pitch||1.05; u.volume=1;  /* near-natural pitch — Apple voices distort when pitched up */
     if(bestVoice)u.voice=bestVoice;
     speechSynthesis.speak(u);}catch(e){}
 }
@@ -928,14 +980,14 @@ function triggerSurge(rem,moveIdx){
   state.surgeFired=true;
   figSpeed=reduceMotion()?1:1.9;
   beep("surge"); buzz([40,30,70]);
-  speak(pick(SURGE1),{critical:true,pitch:1.34,rate:1.12});
+  speak(pick(SURGE1),{critical:true,pitch:1.08,rate:1.18});
   if(!reduceMotion()) $("wTimerWrap").classList.add("surging");
   if(rem>5){ /* enough time left for a second push */
     clearTimeout(surgeTimer);
     surgeTimer=setTimeout(()=>{
       if(cur!=="work"||!cd||cd.isPaused()||state.idx!==moveIdx)return;
       figSpeed=reduceMotion()?1:2.2;
-      beep("surge"); speak(pick(SURGE2),{critical:true,pitch:1.38,rate:1.14});
+      beep("surge"); speak(pick(SURGE2),{critical:true,pitch:1.1,rate:1.28});
     }, Math.min(2600,(rem-3)*1000));
   }
 }
@@ -1007,12 +1059,13 @@ function burst(n,big){
 function bigConfetti(){burst(180,true);} function miniConfetti(){burst(46,false);}
 
 /* ============ SETTINGS ============ */
-function openSettings(){ syncSettings(); $("settingsOverlay").classList.add("on"); }
+function openSettings(){ $("settingsOverlay").classList.add("on"); syncSettings(); }
 function closeSettings(){$("settingsOverlay").classList.remove("on");}
 function syncSettings(){
   $("tgVoice").classList.toggle("on",state.voice);
   $("tgSound").classList.toggle("on",state.sound);
   document.querySelectorAll("#segDiff button").forEach(b=>b.classList.toggle("on",b.dataset.diff===state.diff));
+  populateVoices(); $("voiceRow").hidden=!state.voice;
 }
 
 /* ============ CONFIRM ============ */
@@ -1044,6 +1097,8 @@ $("btnHomeFromDone").addEventListener("click",()=>{renderHome();show("home");});
 $("btnSettings").addEventListener("click",openSettings);
 $("settingsOverlay").addEventListener("click",e=>{if(e.target===$("settingsOverlay"))closeSettings();});
 $("tgVoice").addEventListener("click",()=>{state.voice=!state.voice;store("voice",state.voice);syncSettings();if(state.voice)speak("Hi! I'm your coach.");buzz(15);});
+$("selVoice").addEventListener("change",()=>{state.voiceName=$("selVoice").value||null;store("voiceName",state.voiceName);chooseVoice();speak("Hi! I'm your coach.",{critical:true});buzz(10);});
+$("btnTestVoice").addEventListener("click",()=>{speak(pick(GO_INTRO)+" High knees!",{critical:true});buzz(10);});
 $("tgSound").addEventListener("click",()=>{state.sound=!state.sound;store("sound",state.sound);syncSettings();if(state.sound)beep("ding");buzz(15);});
 document.querySelectorAll("#segDiff button").forEach(b=>{ b.addEventListener("click",()=>{state.diff=b.dataset.diff;store("diff",state.diff);syncSettings();beep("tick");buzz(15);}); });
 $("btnBrowse").addEventListener("click",()=>{beep("tick");closeSettings();openBrowse();});
