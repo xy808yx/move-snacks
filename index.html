@@ -170,7 +170,17 @@
 
   /* ---------- DONE ---------- */
   #done{align-items:center;justify-content:center;text-align:center;}
-  .done-fig{width:140px;height:140px;margin-bottom:4px;animation:pop .5s cubic-bezier(.34,1.56,.64,1) both;}
+  .done-berry{width:138px;height:138px;margin-bottom:6px;display:grid;place-items:center;transform-origin:center bottom;
+    animation:berryBounce .9s cubic-bezier(.45,0,.5,1) infinite;}
+  .done-berry svg{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges;}
+  @keyframes berryBounce{
+    0%{transform:translateY(0) scale(1,1);}
+    15%{transform:translateY(0) scale(1.1,.9);}
+    45%{transform:translateY(-18px) scale(.95,1.06);}
+    70%{transform:translateY(0) scale(1.08,.92);}
+    85%{transform:translateY(-4px) scale(1,1);}
+    100%{transform:translateY(0) scale(1,1);}
+  }
   .done-h{font-size:32px;font-weight:850;letter-spacing:-.6px;margin:6px 0 2px;}
   .done-sub{color:var(--ink2);font-weight:700;font-size:16px;margin-bottom:18px;}
   .done-stats{display:flex;gap:12px;margin-bottom:14px;}
@@ -245,6 +255,7 @@
     .ring-fill{transition:none;}
     .timer-wrap.surging{animation:none;}
     .machine.thunk,.reel-item.reel-hit{animation:none;}
+    .done-berry{animation:none;}
     .btn,.iconbtn,.size{transition:none;}
   }
 </style>
@@ -358,7 +369,15 @@
 
   <!-- ============ DONE ============ -->
   <section id="done" class="screen">
-    <canvas id="doneFig" class="fig done-fig" width="32" height="32"></canvas>
+    <div class="done-berry" id="doneBerry" aria-hidden="true">
+      <svg viewBox="0 0 16 16" shape-rendering="crispEdges">
+        <g fill="#3FB664"><rect x="7" y="3" width="2" height="1"/><rect x="6" y="4" width="4" height="1"/><rect x="5" y="5" width="6" height="1"/></g>
+        <g fill="#FF4D6D"><rect x="5" y="6" width="6" height="1"/><rect x="4" y="7" width="8" height="1"/><rect x="4" y="8" width="8" height="1"/><rect x="4" y="9" width="8" height="1"/><rect x="5" y="10" width="6" height="1"/><rect x="6" y="11" width="4" height="1"/><rect x="7" y="12" width="2" height="1"/></g>
+        <g fill="#FFE08A"><rect x="6" y="7" width="1" height="1"/><rect x="9" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="11" y="8" width="1" height="1"/></g>
+        <g fill="#FF9DB0"><rect x="5" y="9" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/></g>
+        <g fill="#3A1E2A"><rect x="6" y="8" width="1" height="1"/><rect x="9" y="8" width="1" height="1"/><rect x="6" y="10" width="1" height="1"/><rect x="9" y="10" width="1" height="1"/><rect x="7" y="11" width="1" height="1"/><rect x="8" y="11" width="1" height="1"/></g>
+      </svg>
+    </div>
     <div class="done-h">Snack Crushed!</div>
     <div class="done-sub" id="doneSub">You're a movement superstar!</div>
     <div class="done-stats">
@@ -561,41 +580,41 @@ function hexRgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x)
 /* lighten (amt>0 toward white) / darken (amt<0 toward black) an [r,g,b] */
 function shade(rgb,amt){const t=amt<0?0:255,p=Math.min(1,Math.abs(amt));return [Math.round(rgb[0]+(t-rgb[0])*p),Math.round(rgb[1]+(t-rgb[1])*p),Math.round(rgb[2]+(t-rgb[2])*p)];}
 
-/* poses: each is 1-2 frames; engine animates between them */
+/* poses: each is 1-3 keyframes; engine eases a ping-pong across them */
 const POSES = {
-  stand:[[16,17,0, 250,250, 290,290, 268,268, 272,272]],
-  jack:[[16,16,0, 262,262, 278,278, 268,268, 272,272],[16,16,0, 128,128, 52,52, 230,230, 310,310]],
-  tuck:[[16,17,0, 250,250, 290,290, 270,270, 270,270],[16,16,0, 300,300, 240,240, 160,290, 20,250]],
-  broad:[[15,19,18, 205,205, 205,205, 325,272, 325,272],[17,14,40, 38,38, 38,38, 250,250, 250,250]],
-  pogo:[[16,17,0, 256,256, 284,284, 269,269, 271,271],[16,15,0, 256,256, 284,284, 269,269, 271,271]],
-  skater:[[18,17,-7, 65,65, 300,300, 270,270, 218,250],[14,17,7, 240,240, 115,115, 322,290, 270,270]],
-  squatjump:[[15,20,12, 225,225, 225,225, 320,250, 320,250],[16,13,0, 92,92, 88,88, 270,270, 270,270]],
-  bear:[[16,15,-112, 272,272, 272,272, 290,278, 290,278],[16,15,-112, 255,300, 290,250, 300,272, 275,285]],
-  crab:[[16,15,118, 250,250, 250,250, 325,255, 325,255],[16,15,118, 250,250, 250,250, 45,45, 325,255]],
-  gorilla:[[16,18,0, 238,238, 302,302, 216,300, 324,240],[16,19,0, 240,240, 300,300, 214,302, 326,238]],
-  inchworm:[[16,14,-100, 285,285, 285,285, 278,278, 282,282],[16,18,-118, 268,268, 268,268, 248,248, 248,248]],
-  run:[[16,16,6, 250,250, 55,55, 30,300, 250,250],[16,16,6, 55,55, 250,250, 250,250, 30,300]],
-  climb:[[16,16,2, 245,245, 70,70, 18,305, 256,256],[16,16,2, 70,70, 245,245, 256,256, 18,305]],
-  squat:[[16,15,0, 32,32, 32,32, 271,271, 271,271],[15,20,18, 25,25, 25,25, 325,272, 325,272]],
-  wallsit:[[13,18,0, 352,352, 352,352, 2,272, 2,272],[13,18,0, 350,350, 350,350, 2,272, 2,272]],
-  pushup:[[16,16,-104, 285,285, 285,285, 245,245, 245,245],[16,17,-104, 285,210, 285,210, 245,245, 245,245]],
-  superman:[[14,21,-88, 12,12, 12,12, 196,196, 196,196],[14,20,-90, 22,22, 22,22, 202,202, 202,202]],
-  lunge:[[15,16,5, 255,255, 290,290, 325,262, 242,250],[15,18,8, 255,255, 290,290, 330,260, 240,248]],
-  calf:[[16,17,0, 266,266, 274,274, 270,270, 270,270],[16,15,0, 266,266, 274,274, 270,270, 270,270]],
-  plank:[[16,17,-118, 268,210, 268,210, 245,245, 245,245],[16,17,-117, 268,210, 268,210, 246,246, 246,246]],
-  climber:[[16,17,-116, 268,210, 268,210, 245,245, 320,255],[16,17,-116, 268,210, 268,210, 320,255, 245,245]],
-  box:[[16,16,0, 135,40, 45,140, 266,266, 274,274],[16,16,0, 135,40, 25,5, 266,266, 274,274]],
-  flamingo:[[16,16,0, 205,205, 335,335, 232,70, 272,272],[16,16,0, 208,208, 332,332, 235,72, 272,272]],
-  linewalk:[[16,17,0, 178,178, 2,2, 252,252, 288,288],[16,17,0, 178,178, 2,2, 288,288, 252,252]],
-  airplane:[[16,14,-74, 232,232, 232,232, 250,250, 8,8],[16,14,-76, 230,230, 230,230, 252,252, 10,10]],
-  spin:[[16,16,0, 172,172, 8,8, 264,264, 276,276],[16,16,0, 205,150, 335,30, 268,272, 272,268]],
-  situp:[[14,20,-68, 250,250, 250,250, 18,118, 18,118],[14,20,-22, 305,305, 305,305, 18,118, 18,118]],
-  bicycle:[[17,19,86, 250,250, 250,250, 60,120, 28,300],[17,19,86, 250,250, 250,250, 28,300, 60,120]],
-  deadbug:[[16,19,88, 80,80, 80,80, 70,110, 70,110],[16,19,88, 78,78, 95,95, 70,110, 95,95]],
-  boat:[[15,18,34, 350,350, 350,350, 24,24, 24,24],[15,18,32, 352,352, 352,352, 26,26, 26,26]],
-  dance:[[15,16,-6, 150,150, 40,40, 250,250, 285,285],[17,16,6, 145,145, 35,35, 255,255, 290,290]],
-  robot:[[16,16,0, 180,90, 0,90, 270,270, 270,270],[16,16,0, 180,265, 0,265, 270,270, 270,270]],
-  cheer:[[16,16,0, 122,122, 58,58, 252,252, 288,288],[16,14,0, 126,126, 54,54, 248,248, 292,292]],
+  stand:[[16,17,0, 252,252, 288,288, 264,264, 276,276]],
+  jack:[[16,15,0, 146,146, 34,34, 232,232, 308,308],[16,18,0, 256,256, 284,284, 267,267, 273,273]],
+  tuck:[[16,12,0, 305,305, 235,235, 110,15, 70,165],[16,18,0, 250,250, 290,290, 268,268, 272,272]],
+  broad:[[14,19,18, 210,210, 210,210, 322,268, 322,268],[18,13,34, 32,32, 32,32, 250,250, 250,250]],
+  pogo:[[16,18,0, 248,312, 292,228, 268,268, 272,272],[16,12,0, 248,312, 292,228, 270,270, 270,270]],
+  skater:[[18,16,-8, 66,66, 300,300, 274,274, 220,250],[14,16,8, 240,240, 114,114, 320,290, 266,266]],
+  squatjump:[[16,19,12, 222,222, 318,318, 320,250, 320,250],[16,12,0, 92,92, 88,88, 270,270, 270,270]],
+  bear:[[16,15,-112, 274,300, 268,236, 292,278, 300,272],[16,15,-112, 268,236, 274,300, 300,272, 292,278]],
+  crab:[[16,15,118, 250,250, 250,250, 322,255, 60,255],[16,15,118, 250,250, 250,250, 60,255, 322,255]],
+  gorilla:[[15,18,0, 236,236, 304,304, 214,300, 326,238],[17,17,0, 240,240, 300,300, 218,302, 322,240]],
+  inchworm:[[16,15,-104, 286,286, 286,286, 278,278, 282,282],[16,18,-120, 266,250, 266,250, 250,250, 250,250]],
+  run:[[16,16,5, 248,248, 66,66, 45,312, 262,262],[16,16,5, 276,276, 264,264, 250,288, 286,252],[16,16,5, 66,66, 248,248, 262,262, 45,312]],
+  climb:[[16,16,2, 246,246, 70,70, 20,300, 258,258],[16,16,2, 70,70, 246,246, 258,258, 20,300]],
+  squat:[[16,15,0, 96,96, 84,84, 268,268, 272,272],[15,20,16, 30,30, 30,30, 322,268, 322,268]],
+  wallsit:[[13,18,0, 352,352, 352,352, 2,272, 358,272],[13,19,0, 350,350, 354,354, 2,272, 358,272]],
+  pushup:[[16,16,-104, 288,212, 288,212, 252,322, 252,322],[16,18,-104, 288,200, 288,200, 252,322, 252,322]],
+  superman:[[14,20,-88, 14,14, 14,14, 198,198, 198,198],[14,19,-92, 8,8, 8,8, 204,204, 204,204]],
+  lunge:[[15,16,5, 256,256, 288,288, 326,260, 244,250],[15,18,8, 256,256, 288,288, 330,262, 240,248]],
+  calf:[[16,17,0, 266,266, 274,274, 270,270, 270,270],[16,14,0, 266,266, 274,274, 270,270, 270,270]],
+  plank:[[16,17,-118, 268,210, 268,210, 248,248, 248,248],[16,17,-117, 268,213, 268,213, 247,247, 247,247]],
+  climber:[[16,17,-116, 268,210, 268,210, 322,255, 252,252],[16,17,-116, 268,210, 268,210, 258,252, 258,252],[16,17,-116, 268,210, 268,210, 252,252, 322,255]],
+  box:[[16,16,0, 26,26, 82,140, 266,266, 274,274],[16,16,0, 82,138, 98,142, 266,266, 274,274],[16,16,0, 100,158, 154,154, 266,266, 274,274]],
+  flamingo:[[16,16,0, 205,205, 335,335, 232,70, 272,272],[16,16,2, 208,208, 332,332, 234,66, 271,271]],
+  linewalk:[[16,17,0, 178,178, 2,2, 250,250, 290,290],[16,17,0, 178,178, 2,2, 286,286, 256,256]],
+  airplane:[[16,14,-74, 232,232, 232,232, 250,250, 8,8],[16,14,-78, 230,230, 230,230, 252,252, 6,6]],
+  spin:[[16,16,0, 170,170, 10,10, 264,264, 276,276],[16,16,0, 200,150, 340,30, 268,272, 272,268]],
+  situp:[[14,20,-70, 250,250, 250,250, 20,120, 20,120],[15,19,-20, 300,300, 300,300, 18,118, 18,118]],
+  bicycle:[[17,19,86, 250,250, 250,250, 55,120, 30,300],[17,19,86, 250,250, 250,250, 42,300, 42,140],[17,19,86, 250,250, 250,250, 30,300, 55,120]],
+  deadbug:[[16,19,88, 78,78, 92,92, 68,112, 96,96],[16,19,88, 92,92, 78,78, 96,96, 68,112]],
+  boat:[[15,18,33, 350,350, 350,350, 24,24, 24,24],[15,18,30, 352,352, 352,352, 26,26, 26,26]],
+  dance:[[14,16,-8, 122,160, 300,300, 252,252, 286,286],[16,15,0, 112,112, 68,68, 262,262, 278,278],[18,16,8, 240,240, 20,60, 254,254, 288,288]],
+  robot:[[16,16,0, 180,90, 0,90, 270,270, 270,270],[16,16,0, 180,268, 0,268, 270,270, 270,270]],
+  cheer:[[16,17,0, 125,125, 55,55, 256,256, 284,284],[16,14,0, 132,150, 48,30, 250,250, 290,290]],
 };
 
 function figFill(canvas, poseId, frame, hex){
@@ -607,26 +626,38 @@ function figFill(canvas, poseId, frame, hex){
   ctx.clearRect(0,0,FIG_S,FIG_S);
   ctx.putImageData(img,0,0);
 }
-/* smooth interpolated frame: eased ping-pong (frame0 -> frame1 -> frame0) */
+/* smooth interpolated frame: eased ping-pong across N keyframes (0->1->..->n-1->..->1->0) */
 function figFillLerp(cv,pose,hex,u){
   const ctx=cv.getContext('2d');
   const fr=POSES[pose]||POSES.stand;
-  const a=fr[0], b=fr[fr.length>1?1:0];
-  const e=(1-Math.cos(u*Math.PI*2))/2;
-  const f=a.map((v,i)=>v+(b[i]-v)*e);
+  const n=fr.length;
+  let f;
+  if(n===1){ f=fr[0]; }
+  else {
+    const seqLen=2*(n-1);
+    const p=(((u%1)+1)%1)*seqLen;
+    const i=Math.floor(p), t=p-i;
+    const idx=k=>{ k=((k%seqLen)+seqLen)%seqLen; return k<n?k:seqLen-k; };
+    const a=fr[idx(i)], b=fr[idx(i+1)];
+    const e=(1-Math.cos(t*Math.PI))/2;
+    f=a.map((v,j)=>v+(b[j]-v)*e);
+  }
   const img=ctx.createImageData(FIG_S,FIG_S);
   drawFig(img.data, buildPose(f), figPalette(hex));
   ctx.clearRect(0,0,FIG_S,FIG_S);
   ctx.putImageData(img,0,0);
 }
 /* single live animated figure (home / player / done). figSpeed: 1 normal, surge ~1.9-2.2 */
-let figRAF=null, figCv=null, figPose=null, figHex=null, figLast=0, figT=0, figSpeed=1;
-const FIG_CYCLE_MS=760;
+let figRAF=null, figCv=null, figPose=null, figHex=null, figLast=0, figT=0, figSpeed=1, figTempo=1;
+const FIG_CYCLE_MS=820;
+/* per-pose tempo: >1 faster, <1 slower (default 1) */
+const POSE_TEMPO={ run:1.8, climber:1.6, jack:1.4, pogo:1.45, box:1.55, bicycle:1.4, tuck:1.35, squatjump:1.25, skater:1.15, dance:1.1, gorilla:1.15, crab:1.1,
+  flamingo:0.55, airplane:0.55, deadbug:0.5, linewalk:0.6, plank:0.5, wallsit:0.5, superman:0.55, calf:0.75, boat:0.55, spin:0.7, inchworm:0.7, situp:0.85, lunge:0.85, robot:0.9 };
 function startFig(cv,pose,hex){
-  stopFig(); figCv=cv;figPose=pose;figHex=hex; figT=0; figSpeed=1; /* surge always re-applies after this */
+  stopFig(); figCv=cv;figPose=pose;figHex=hex; figT=0; figSpeed=1; figTempo=POSE_TEMPO[pose]||1; /* surge re-applies after this */
   if(reduceMotion()){ figFill(cv,pose,0,hex); return; } /* static but still cute */
   figFillLerp(cv,pose,hex,0); figLast=performance.now();
-  const loop=t=>{ const dt=t-figLast; figLast=t; figT=(figT+dt*figSpeed/FIG_CYCLE_MS)%1; figFillLerp(figCv,figPose,figHex,figT); figRAF=requestAnimationFrame(loop); };
+  const loop=t=>{ const dt=t-figLast; figLast=t; figT=(figT+dt*figSpeed*figTempo/FIG_CYCLE_MS)%1; figFillLerp(figCv,figPose,figHex,figT); figRAF=requestAnimationFrame(loop); };
   figRAF=requestAnimationFrame(loop);
 }
 function stopFig(){ if(figRAF)cancelAnimationFrame(figRAF); figRAF=null; }
@@ -681,17 +712,34 @@ const MID_CHEER=["You're crushing it!","Keep it up!","Looking strong!","So good!
 const SURGE1=["Faster!","Speed it up!","Go go go!","Turbo time!"];
 const SURGE2=["Faster yet!","Top speed!","Maximum power!","You're a rocket!"];
 const FINISH=["You're a movement superstar!","Your body says thank you!","Brain recharged — let's learn!","Strong work, athlete!","You've got the zoomies!","Amazing moving!"];
-let voices=[], lastSpeakAt=0;
-function loadVoices(){try{voices=speechSynthesis.getVoices();}catch(e){}}
+let voices=[], bestVoice=null, lastSpeakAt=0;
+/* unintelligible / joke voices to never auto-pick (mostly classic macOS; protects fallback) */
+const VOICE_BAD=/bahh|bells|boing|bubbles|cellos|jester|organ|trinoids|wobble|whisper|bad news|good news|albert|fred|ralph|zarvox|hysterical|deranged|pipe|superstar|wheez/i;
+function chooseVoice(){
+  const en=voices.filter(v=>v.lang&&/^en/i.test(v.lang));
+  if(!en.length){bestVoice=voices[0]||null;return;}
+  const score=v=>{const n=(v.name+" "+(v.voiceURI||"")).toLowerCase();if(VOICE_BAD.test(n))return -100;let s=0;
+    if(/junior/.test(n))s+=60;            /* a young/kid voice = playful + clear */
+    if(/siri/.test(n))s+=52;
+    if(/premium|enhanced/.test(n))s+=46;
+    if(/samantha|ava|allison|susan|zoe|nicky|sandy|shelley|flo|karen|moira|tessa|kathy/.test(n))s+=26;
+    if(/google us english|google uk english female/.test(n))s+=22;
+    if(/female/.test(n))s+=8; if(v.localService)s+=5; if(/en-us/i.test(v.lang))s+=5; if(v.default)s+=2;
+    return s;};
+  en.sort((a,b)=>score(b)-score(a));
+  bestVoice = score(en[0])>0 ? en[0] : (en.find(v=>v.default)||en[0]);
+}
+function loadVoices(){try{voices=speechSynthesis.getVoices();}catch(e){} chooseVoice();}
 function speak(text,opt){
   if(!state.voice||!("speechSynthesis"in window))return;
   opt=opt||{};
   const now=performance.now();
   if(!opt.critical && now-lastSpeakAt<1200) return; /* throttle non-critical cheers */
   lastSpeakAt=now;
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=opt.rate||1.05;u.pitch=opt.pitch||1.22;u.volume=1;
-    const v=voices.find(v=>/female|samantha|karen|moira|tessa|google us/i.test(v.name))||voices.find(v=>v.lang&&v.lang.startsWith("en"));
-    if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);
+    u.rate=opt.rate||1.04; u.pitch=opt.pitch||1.4; u.volume=1;  /* high pitch = playful/cartoony */
+    if(bestVoice)u.voice=bestVoice;
+    speechSynthesis.speak(u);}catch(e){}
 }
 function buzz(ms){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
 
@@ -909,7 +957,7 @@ function runExercise(i){
     setRing($("ringWork"),rem/total);
     const w=Math.max(0,Math.ceil(rem)); $("wNum").textContent=w;
     if(w!==lastTickSec){lastTickSec=w; if(w<=5&&w>0)beep("tickfinal",w);}
-    if(!midCheered && sec>=18 && rem<=total*0.5){ midCheered=true; speak(pick(MID_CHEER)); }
+    if(!midCheered && sec>=28 && rem<=total*0.5){ midCheered=true; if(Math.random()<0.5) speak(pick(MID_CHEER)); }
     if(i===state.surgeIdx && !state.surgeFired && rem<=total*0.6){ triggerSurge(rem,i); }
   },()=>{ beep("switch");buzz([30,40,60]); miniConfetti(); next(); });
 }
@@ -931,7 +979,7 @@ function finishWorkout(){
   $("dMoves").textContent=moves; $("dTime").textContent=fmtTime(act);
   $("doneSub").textContent=pick(FINISH);
   show("done");
-  startFig($("doneFig"),"cheer","#FF5E7E");
+  stopFig(); /* halt work figure; the strawberry mascot is CSS-animated */
   beep("win");buzz([40,60,40,60,80]); speak(pick(FINISH),{critical:true});
   bigConfetti();
 }
