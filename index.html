@@ -590,6 +590,7 @@ const CATS = {
   dance:   {label:"Dance",   col:["#FF5CB0","#B05CFF"]},
 };
 const colOf = c => CATS[c].col;
+const gradOf = col => "linear-gradient(135deg,"+col[0]+","+col[1]+")";
 
 /* ---------- exercises ----------
    p = pixel-art pose id (see POSES), s = work seconds, q = intensity (1 calm·2 moderate·3 vigorous) */
@@ -642,7 +643,6 @@ const EX = [
   {n:"Robot Dance",p:"robot",c:"dance",q:1,s:45,t:0.85,i:"Move stiff and blocky like a robot!"},
 ];
 
-const COUNTS = [3,5,7];
 const C = 2 * Math.PI * 95;
 
 /* ============================================================
@@ -779,23 +779,21 @@ function computeFit(frames){
 function fitFor(pose){ return FIT[pose]||(FIT[pose]=computeFit(POSES[pose]||POSES.stand)); }
 GLOBAL_S = Math.min(...Object.keys(POSES).map(k=>maxFillScale(POSES[k]).s));
 
-function figFill(canvas, poseId, frame, hex){
-  const ctx=canvas.getContext('2d');
-  const fr=POSES[poseId]||POSES.stand;
-  const f=fr[frame % fr.length];
-  const img=ctx.createImageData(FIG_S,FIG_S);
-  drawFig(img.data, buildPose(f), figPalette(hex), fitFor(poseId));
-  ctx.clearRect(0,0,FIG_S,FIG_S);
-  ctx.putImageData(img,0,0);
+/* one scratch buffer + memoized palettes: the live figure redraws every rAF frame,
+   so no per-frame allocation (putImageData copies the buffer, sharing is safe) */
+const FIG_IMG=new ImageData(FIG_S,FIG_S);
+const PALS={};
+function figRender(cv,f,pose,hex){
+  FIG_IMG.data.fill(0);
+  drawFig(FIG_IMG.data, buildPose(f), PALS[hex]||(PALS[hex]=figPalette(hex)), fitFor(pose));
+  cv.getContext('2d').putImageData(FIG_IMG,0,0);
 }
+function figFill(cv,pose,hex){ figRender(cv,(POSES[pose]||POSES.stand)[0],pose,hex); }
 /* smooth interpolated frame: eased ping-pong across N keyframes (0->1->..->n-1->..->1->0) */
 function figFillLerp(cv,pose,hex,u){
-  const ctx=cv.getContext('2d');
-  const fr=POSES[pose]||POSES.stand;
-  const n=fr.length;
-  let f;
-  if(n===1){ f=fr[0]; }
-  else {
+  const fr=POSES[pose]||POSES.stand, n=fr.length;
+  let f=fr[0];
+  if(n>1){
     const seqLen=2*(n-1);
     const p=(((u%1)+1)%1)*seqLen;
     const i=Math.floor(p), t=p-i;
@@ -804,10 +802,7 @@ function figFillLerp(cv,pose,hex,u){
     const e=(1-Math.cos(t*Math.PI))/2;
     f=a.map((v,j)=>v+(b[j]-v)*e);
   }
-  const img=ctx.createImageData(FIG_S,FIG_S);
-  drawFig(img.data, buildPose(f), figPalette(hex), fitFor(pose));
-  ctx.clearRect(0,0,FIG_S,FIG_S);
-  ctx.putImageData(img,0,0);
+  figRender(cv,f,pose,hex);
 }
 /* single live animated figure (home / player / done). figSpeed: 1 normal, surge ~1.9-2.2 */
 let figRAF=null, figCv=null, figPose=null, figHex=null, figLast=0, figT=0, figSpeed=1, figTempo=1, figTMul=1;
@@ -819,7 +814,7 @@ const POSE_TEMPO={ run:1.8, climber:1.6, jack:1.4, pogo:1.45, box:1.55, bicycle:
 /* tMul = optional per-exercise tempo override (EX `t:` field) on top of the pose tempo */
 function startFig(cv,pose,hex,tMul){
   stopFig(); figCv=cv;figPose=pose;figHex=hex; figT=0; figSpeed=1; figTMul=tMul||1; figTempo=(POSE_TEMPO[pose]||1)*figTMul; /* surge re-applies after this */
-  if(reduceMotion()){ figFill(cv,pose,0,hex); return; } /* static but still cute */
+  if(reduceMotion()){ figFill(cv,pose,hex); return; } /* static but still cute */
   figFillLerp(cv,pose,hex,0); figLast=performance.now();
   const loop=t=>{ const dt=t-figLast; figLast=t; figT=(figT+dt*figSpeed*figTempo/FIG_CYCLE_MS)%1; figFillLerp(figCv,figPose,figHex,figT); figRAF=requestAnimationFrame(loop); };
   figRAF=requestAnimationFrame(loop);
@@ -844,7 +839,6 @@ function toggleFav(n){const i=state.favs.indexOf(n); if(i>=0)state.favs.splice(i
 /* ---------- dates ---------- */
 const dStr = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const todayStr = () => dStr(new Date());
-const yesterdayStr = () => dStr(new Date(Date.now()-864e5));
 
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
@@ -855,6 +849,7 @@ function restSecs(){return state.diff==="easy"?22:state.diff==="spicy"?14:18;}
 function fmtTime(sec){const m=Math.floor(sec/60),s=Math.round(sec%60);return m+"m "+(s<10?"0":"")+s+"s";}
 function reduceMotion(){try{return !!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);}catch(e){return false;}}
 const pick = a => a[Math.floor(Math.random()*a.length)];
+function replay(el,cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); } /* restart a CSS animation */
 
 /* ---------- audio ---------- */
 /* All tones route through a master gain (volume slider, can boost >1) into a
@@ -968,12 +963,20 @@ function renderHome(){
   document.querySelectorAll(".size").forEach(el=>el.classList.toggle("sel",+el.dataset.count===state.count));
 }
 
+/* ---------- star toggle button (browse rows + done-screen recap) ---------- */
+function makeStarBtn(name,onToggle){
+  const st=document.createElement("button"); st.className="star-btn"+(isFav(name)?" on":""); st.innerHTML=STAR_SVG;
+  st.setAttribute("aria-label","Favorite "+name);
+  st.addEventListener("click",()=>{ toggleFav(name); beep("sparkle"); buzz(10); onToggle(st); });
+  return st;
+}
+
 /* ============ BROWSE ALL MOVES ============ */
 function makeBrowseRow(ex){
   const col=colOf(ex.c);
   const row=document.createElement("div"); row.className="brow";
   const tile=document.createElement("div"); tile.className="bemo";
-  tile.style.background="linear-gradient(135deg,"+col[0]+","+col[1]+")";
+  tile.style.background=gradOf(col);
   const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; tile.appendChild(cv);
   const txt=document.createElement("div"); txt.className="btxt";
   txt.innerHTML='<div class="bnm"><span class="bnmn"></span><span class="intens"></span></div><div class="bin"></div>';
@@ -982,12 +985,9 @@ function makeBrowseRow(ex){
   for(let k=1;k<=3;k++){const i=document.createElement("i");i.style.background=k<=ex.q?col[0]:"#DDD8E8";intens.appendChild(i);}
   txt.querySelector(".bin").textContent=ex.i;
   const dur=document.createElement("div"); dur.className="bdur"; dur.innerHTML=ex.s+"<small>sec</small>";
-  const st=document.createElement("button"); st.className="star-btn"+(isFav(ex.n)?" on":""); st.innerHTML=STAR_SVG;
-  st.setAttribute("aria-label","Favorite "+ex.n);
-  st.addEventListener("click",()=>{ toggleFav(ex.n); beep("sparkle"); buzz(10);
-    const list=$("browseList"); const sc=list.scrollTop; renderBrowse(); list.scrollTop=sc; });
+  const st=makeStarBtn(ex.n,()=>{ const list=$("browseList"); const sc=list.scrollTop; renderBrowse(); list.scrollTop=sc; });
   row.appendChild(tile); row.appendChild(txt); row.appendChild(dur); row.appendChild(st);
-  figFill(cv,ex.p,0,"#FFFFFF");
+  figFill(cv,ex.p,"#FFFFFF");
   return row;
 }
 function renderBrowse(){
@@ -1006,7 +1006,7 @@ function renderBrowse(){
     const col=colOf(cat);
     const head=document.createElement("div"); head.className="browse-cat";
     head.innerHTML='<span class="cdot"></span><span class="clab"></span><span class="ccount"></span>';
-    head.querySelector(".cdot").style.background="linear-gradient(135deg,"+col[0]+","+col[1]+")";
+    head.querySelector(".cdot").style.background=gradOf(col);
     head.querySelector(".clab").textContent=CATS[cat].label;
     head.querySelector(".ccount").textContent="· "+exs.length;
     list.appendChild(head);
@@ -1079,9 +1079,9 @@ function doSpin(){
     item.appendChild(cv);
     const nm=document.createElement("div");nm.className="nm";nm.textContent=ex.n;item.appendChild(nm);
     const cat=document.createElement("div");cat.className="reel-cat";cat.textContent=CATS[ex.c].label;
-    cat.style.background="linear-gradient(135deg,"+col[0]+","+col[1]+")";item.appendChild(cat);
+    cat.style.background=gradOf(col);item.appendChild(cat);
     strip.appendChild(item);
-    figFill(cv,ex.p,0,col[0]);
+    figFill(cv,ex.p,col[0]);
   });
   strip.style.transition="none"; strip.style.transform="translateY(0)";
   const itemH=172, finalY=-(fillers.length-1)*itemH;
@@ -1097,8 +1097,8 @@ function doSpin(){
   const finish=()=>{ if(done)return;done=true; tickTimers.forEach(clearTimeout);
     beep("switch"); buzz([50,40,80]);
     if(!rm){
-      const mach=document.querySelector(".machine"); if(mach){ mach.classList.remove("thunk"); void mach.offsetWidth; mach.classList.add("thunk"); }
-      const tgt=strip.lastElementChild; if(tgt) tgt.classList.add("reel-hit");
+      replay(document.querySelector(".machine"),"thunk");
+      strip.lastElementChild.classList.add("reel-hit");
       miniConfetti();
     }
     setTimeout(showPack, rm?240:520);
@@ -1119,17 +1119,17 @@ function showPack(){
     const col=colOf(ex.c);
     const card=document.createElement("div");card.className="pcard";card.style.animationDelay=Math.min(idx*0.045,0.7)+"s";
     const num=document.createElement("div");num.className="pnum";num.textContent=idx+1;
-    const tile=document.createElement("div");tile.className="pemo";tile.style.background="linear-gradient(135deg,"+col[0]+","+col[1]+")";
+    const tile=document.createElement("div");tile.className="pemo";tile.style.background=gradOf(col);
     const cv=document.createElement("canvas");cv.className="fig";cv.width=cv.height=FIG_S;tile.appendChild(cv);
     const txt=document.createElement("div");txt.className="ptxt";
     txt.innerHTML='<div class="pnm"></div><div class="pin"></div>';
     txt.querySelector(".pnm").textContent=ex.n; txt.querySelector(".pin").textContent=ex.i;
     const dur=document.createElement("div");dur.className="pdur";dur.textContent=sec+"s";
     dur.style.background=col[0]+"1A";dur.style.color=col[0];
-    num.style.background="linear-gradient(135deg,"+col[0]+","+col[1]+")";num.style.color="#fff";
+    num.style.background=gradOf(col);num.style.color="#fff";
     card.appendChild(num);card.appendChild(tile);card.appendChild(txt);card.appendChild(dur);
     list.appendChild(card);
-    figFill(cv,ex.p,0,"#FFFFFF");
+    figFill(cv,ex.p,"#FFFFFF");
   });
   $("packCount").textContent=state.pack.length+" moves";
   $("packTime").textContent="~"+Math.max(1,Math.round(totalSec/60))+" min";
@@ -1179,13 +1179,10 @@ function goReady(i){
   countdown(dur,(rem)=>{ setRing($("ringReady"),rem/dur); const w=Math.ceil(rem);
     if(w!==lastTickSec){lastTickSec=w;
       if(w<=3&&w>0){beep("tick"); /* big 3·2·1 for pre-readers */
-        rn.textContent=w; rn.classList.remove("pop"); void rn.offsetWidth; rn.classList.add("pop");}} },()=>{ runExercise(i); });
+        rn.textContent=w; replay(rn,"pop");}} },()=>{ runExercise(i); });
 }
 /* surge: fire once per move, ~once per session, on safety-approved in-place moves only */
-function surgeFlash(txt){
-  const ph=$("wPhase"); ph.textContent=txt;
-  ph.classList.remove("surge"); void ph.offsetWidth; ph.classList.add("surge");
-}
+function surgeFlash(txt){ const ph=$("wPhase"); ph.textContent=txt; replay(ph,"surge"); }
 function triggerSurge(rem,moveIdx){
   state.surgeFired=true;
   figSpeed=reduceMotion()?1:1.9;
@@ -1207,19 +1204,21 @@ function cheerPop(){
   pop.textContent=pick(MID_CHEER); $("wTimerWrap").appendChild(pop);
   setTimeout(()=>pop.remove(),1500);
 }
+function setPauseUI(paused){ $("pauseIc").innerHTML=paused?ICON_PLAY:ICON_PAUSE; $("pauseTx").textContent=paused?"Resume":"Pause"; }
+function setPhase(txt){ const ph=$("wPhase"); ph.textContent=txt; ph.classList.remove("surge"); }
 function runExercise(i){
   state.idx=i; const ex=state.pack[i]; const sec=exSecs(ex);
   figSpeed=1; clearTimeout(surgeTimer); $("wTimerWrap").classList.remove("surging"); /* reset surge */
   show("work"); updateDots();
   $("wCount").textContent=(i+1)+" / "+state.pack.length;
-  $("wName").textContent=ex.n; $("wInstr").textContent=ex.i; $("wPhase").textContent="Move!"; $("wPhase").classList.remove("surge");
+  $("wName").textContent=ex.n; $("wInstr").textContent=ex.i; setPhase("Move!");
   const col=colOf(ex.c);
   const grad=$("gWork"); grad.children[0].setAttribute("stop-color",col[0]); grad.children[1].setAttribute("stop-color",col[1]);
   $("ringWork").style.filter="drop-shadow(0 4px 10px "+col[0]+"44)";
   $("work").style.background="linear-gradient(180deg,"+col[0]+"14,rgba(255,255,255,0) 45%)";
-  $("wName").style.backgroundImage="linear-gradient(135deg,"+col[0]+","+col[1]+")";
+  $("wName").style.backgroundImage=gradOf(col);
   startFig($("wFig"), ex.p, col[0], ex.t);
-  $("pauseIc").innerHTML=ICON_PAUSE; $("pauseTx").textContent="Pause";
+  setPauseUI(false);
   const numEl=$("wNum"); numEl.textContent=sec; numEl.classList.remove("hot","tickpop");
   beep("go");buzz(30); lastTickSec=null;
   let midCheered=false;
@@ -1228,7 +1227,7 @@ function runExercise(i){
     const w=Math.max(0,Math.ceil(rem)); numEl.textContent=w;
     if(w!==lastTickSec){lastTickSec=w;
       if(w<=5&&w>0){beep("tickfinal",w);
-        numEl.classList.add("hot"); numEl.classList.remove("tickpop"); void numEl.offsetWidth; numEl.classList.add("tickpop");}}
+        numEl.classList.add("hot"); replay(numEl,"tickpop");}}
     if(!midCheered && sec>=28 && rem<=total*0.5){ midCheered=true; cheerPop(); }
     if(i===state.surgeIdx && !state.surgeFired && rem<=total*0.6){ triggerSurge(rem,i); }
   },()=>{ beep("switch");buzz([30,40,60]); miniConfetti(); next(); });
@@ -1236,8 +1235,8 @@ function runExercise(i){
 function next(){ const n=state.idx+1; if(n>=state.pack.length)finishWorkout(); else goReady(n); }
 function togglePause(){
   if(!cd)return;
-  if(cd.isPaused()){ cd.resume(); startFig(figCv,figPose,figHex,figTMul); $("pauseIc").innerHTML=ICON_PAUSE;$("pauseTx").textContent="Pause"; $("wPhase").textContent="Move!"; $("wPhase").classList.remove("surge"); }
-  else { cd.pause(); stopFig(); clearTimeout(surgeTimer); $("pauseIc").innerHTML=ICON_PLAY;$("pauseTx").textContent="Resume"; $("wPhase").textContent="Paused"; $("wPhase").classList.remove("surge"); }
+  if(cd.isPaused()){ cd.resume(); startFig(figCv,figPose,figHex,figTMul); setPauseUI(false); setPhase("Move!"); }
+  else { cd.pause(); stopFig(); clearTimeout(surgeTimer); setPauseUI(true); setPhase("Paused"); }
 }
 
 /* ============ DONE ============ */
@@ -1264,16 +1263,13 @@ function buildRecap(){
     const col=colOf(ex.c);
     const card=document.createElement("div"); card.className="recap-card";
     const tile=document.createElement("div"); tile.className="rtile";
-    tile.style.background="linear-gradient(135deg,"+col[0]+","+col[1]+")";
+    tile.style.background=gradOf(col);
     const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; tile.appendChild(cv);
     const nm=document.createElement("div"); nm.className="rnm"; nm.textContent=ex.n;
-    const st=document.createElement("button"); st.className="star-btn"+(isFav(ex.n)?" on":""); st.innerHTML=STAR_SVG;
-    st.setAttribute("aria-label","Favorite "+ex.n);
-    st.addEventListener("click",()=>{ toggleFav(ex.n); st.classList.toggle("on",isFav(ex.n)); beep("sparkle"); buzz(10);
-      card.classList.remove("pop2"); void card.offsetWidth; card.classList.add("pop2"); });
+    const st=makeStarBtn(ex.n,btn=>{ btn.classList.toggle("on",isFav(ex.n)); replay(card,"pop2"); });
     card.appendChild(tile); card.appendChild(nm); card.appendChild(st);
     row.appendChild(card);
-    figFill(cv,ex.p,0,"#FFFFFF");
+    figFill(cv,ex.p,"#FFFFFF");
   });
 }
 
@@ -1302,10 +1298,10 @@ function bigConfetti(){burst(180,true);} function miniConfetti(){burst(46,false)
 /* ============ SETTINGS ============ */
 function openSettings(){ $("settingsOverlay").classList.add("on"); syncSettings(); }
 function closeSettings(){$("settingsOverlay").classList.remove("on");}
+function syncVolUI(){ const vs=$("volSlider"), pct=Math.round(state.vol*100); vs.value=pct; vs.style.setProperty("--volfill",pct+"%"); }
 function syncSettings(){
   $("tgSound").classList.toggle("on",state.sound);
-  const vs=$("volSlider"), pct=Math.round(state.vol*100);
-  vs.value=pct; vs.style.setProperty("--volfill",pct+"%");
+  syncVolUI();
   $("volRow").style.opacity=state.sound?"":"0.45";
   document.querySelectorAll("#segDiff button").forEach(b=>b.classList.toggle("on",b.dataset.diff===state.diff));
 }
@@ -1335,7 +1331,7 @@ $("wQuit").addEventListener("click",quitToHome);
 $("btnAgain").addEventListener("click",()=>{beep("tick");doSpin();});
 $("doneBolt").addEventListener("pointerdown",()=>{ /* mash the mascot = confetti, no throttle */
   beep("sparkle"); buzz(10); burst(18,false);
-  const b=$("doneBolt"); b.classList.remove("poke"); void b.offsetWidth; b.classList.add("poke");
+  replay($("doneBolt"),"poke");
 });
 $("doneBolt").addEventListener("animationend",e=>{ if(e.animationName==="boltPoke")$("doneBolt").classList.remove("poke"); });
 $("btnHomeFromDone").addEventListener("click",()=>{renderHome();show("home");});
@@ -1346,10 +1342,11 @@ $("tgSound").addEventListener("click",()=>{state.sound=!state.sound;store("sound
   if(state.sound){ensureAudio();beep("ding");}else releaseAudioSession(); buzz(15);});
 $("volSlider").addEventListener("input",e=>{
   state.vol=Math.max(0,Math.min(1,(+e.target.value||0)/100));
-  if(!state.sound&&state.vol>0){state.sound=true;store("sound",true);claimAudioSession();} /* dragging volume up implies wanting sound */
-  store("vol",state.vol); applyVol(); syncSettings();
+  if(!state.sound&&state.vol>0){state.sound=true;store("sound",true);store("vol",state.vol);claimAudioSession();syncSettings();} /* dragging volume up implies wanting sound; persist both so an interrupted drag can't store sound-on with a stale vol */
+  syncVolUI();
+  applyVol();
 });
-$("volSlider").addEventListener("change",()=>{ensureAudio();beep("ding");buzz(10);}); /* hear the new level */
+$("volSlider").addEventListener("change",()=>{store("vol",state.vol);ensureAudio();beep("ding");buzz(10);}); /* persist once + hear the new level */
 document.querySelectorAll("#segDiff button").forEach(b=>{ b.addEventListener("click",()=>{state.diff=b.dataset.diff;store("diff",state.diff);syncSettings();beep("tick");buzz(15);}); });
 $("btnAllMoves").addEventListener("click",()=>{beep("tick");buzz(10);openBrowse();});
 $("brClose").addEventListener("click",()=>{beep("tick");renderHome();show("home");});
