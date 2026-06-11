@@ -535,7 +535,7 @@
   <div class="sheet">
     <div class="grip"></div>
     <h3>Settings</h3>
-    <div class="setrow"><div class="lab">Sound effects<small>Beeps &amp; cheers</small></div><div class="toggle" id="tgSound"></div></div>
+    <div class="setrow"><div class="lab">Sound effects<small>Beeps &amp; cheers — plays even on silent mode</small></div><div class="toggle" id="tgSound"></div></div>
     <div class="setrow" id="volRow" style="flex-direction:column;align-items:stretch;gap:10px;">
       <div class="lab">Volume<small>How loud the beeps &amp; cheers are</small></div>
       <div class="volwrap">
@@ -860,6 +860,38 @@ const pick = a => a[Math.floor(Math.random()*a.length)];
 /* All tones route through a master gain (volume slider, can boost >1) into a
    compressor so stacked notes never clip. applyVol uses a perceptual curve. */
 let actx=null, masterGain=null;
+
+/* iOS plays WebAudio through the "ambient" session, which the ringer/silent
+   switch mutes. While sound is ON we claim a "playback" session so beeps play
+   even on silent: the AudioSession API where available (iOS 17+), plus a
+   looping silent <audio> element that flips the session category on any iOS
+   Safari. Claiming "playback" pauses other media (music) — released when the
+   sound toggle goes off. */
+const IS_IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+let silentEl=null;
+function silentWavURI(){ /* 0.3s of 8-bit mono PCM silence @8kHz, built in place */
+  const n=2400, b=new Uint8Array(44+n);
+  const wr=(o,s)=>{for(let i=0;i<s.length;i++)b[o+i]=s.charCodeAt(i);};
+  const u32=(o,v)=>{b[o]=v&255;b[o+1]=v>>8&255;b[o+2]=v>>16&255;b[o+3]=v>>24&255;};
+  const u16=(o,v)=>{b[o]=v&255;b[o+1]=v>>8&255;};
+  wr(0,"RIFF");u32(4,36+n);wr(8,"WAVE");wr(12,"fmt ");u32(16,16);u16(20,1);u16(22,1);
+  u32(24,8000);u32(28,8000);u16(32,1);u16(34,8);wr(36,"data");u32(40,n);b.fill(128,44);
+  let s="";for(let i=0;i<b.length;i+=4096)s+=String.fromCharCode.apply(null,b.subarray(i,i+4096));
+  return "data:audio/wav;base64,"+btoa(s);
+}
+function claimAudioSession(){
+  if(!state.sound)return;
+  try{if(navigator.audioSession)navigator.audioSession.type="playback";}catch(e){}
+  if(!IS_IOS)return;
+  try{
+    if(!silentEl){silentEl=new Audio(silentWavURI());silentEl.loop=true;silentEl.setAttribute("playsinline","");}
+    const p=silentEl.play(); if(p&&p.catch)p.catch(()=>{});
+  }catch(e){}
+}
+function releaseAudioSession(){
+  try{if(navigator.audioSession)navigator.audioSession.type="auto";}catch(e){}
+  try{if(silentEl)silentEl.pause();}catch(e){}
+}
 function ensureAudio(){
   if(!actx){try{
     actx=new (window.AudioContext||window.webkitAudioContext)();
@@ -868,7 +900,8 @@ function ensureAudio(){
     masterGain.connect(comp); comp.connect(actx.destination);
     applyVol();
   }catch(e){}}
-  if(actx&&actx.state==="suspended")actx.resume();
+  if(actx&&(actx.state==="suspended"||actx.state==="interrupted"))actx.resume();
+  claimAudioSession();
 }
 function applyVol(){ if(masterGain)masterGain.gain.value=Math.pow(state.vol,1.6)*2.6; }
 function tone(freq,dur,type="sine",vol=0.16){
@@ -906,6 +939,7 @@ document.addEventListener("visibilitychange",()=>{
   } else {
     if(cur==="ready"&&cd)cd.resume();
     if(cur==="work"||cur==="ready")keepAwake(); /* OS releases the lock on hide; re-grab it */
+    if(state.sound)claimAudioSession(); /* iOS pauses the session keeper on hide; resume it */
   }
 });
 
@@ -1308,10 +1342,11 @@ $("btnHomeFromDone").addEventListener("click",()=>{renderHome();show("home");});
 
 $("btnSettings").addEventListener("click",openSettings);
 $("settingsOverlay").addEventListener("click",e=>{if(e.target===$("settingsOverlay"))closeSettings();});
-$("tgSound").addEventListener("click",()=>{state.sound=!state.sound;store("sound",state.sound);syncSettings();if(state.sound)beep("ding");buzz(15);});
+$("tgSound").addEventListener("click",()=>{state.sound=!state.sound;store("sound",state.sound);syncSettings();
+  if(state.sound){ensureAudio();beep("ding");}else releaseAudioSession(); buzz(15);});
 $("volSlider").addEventListener("input",e=>{
   state.vol=Math.max(0,Math.min(1,(+e.target.value||0)/100));
-  if(!state.sound&&state.vol>0){state.sound=true;store("sound",true);} /* dragging volume up implies wanting sound */
+  if(!state.sound&&state.vol>0){state.sound=true;store("sound",true);claimAudioSession();} /* dragging volume up implies wanting sound */
   store("vol",state.vol); applyVol(); syncSettings();
 });
 $("volSlider").addEventListener("change",()=>{ensureAudio();beep("ding");buzz(10);}); /* hear the new level */
