@@ -22,6 +22,8 @@
     --shadow-lg:0 18px 50px rgba(40,30,80,.18);
     --safe-t:env(safe-area-inset-top,0px);
     --safe-b:env(safe-area-inset-bottom,0px);
+    --safe-l:env(safe-area-inset-left,0px);
+    --safe-r:env(safe-area-inset-right,0px);
     --jump1:#FF5E7E; --jump2:#FF9D5C;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -136,7 +138,7 @@
     border:3px solid #fff;position:relative;}
   .machine::before{content:"";position:absolute;top:8px;left:32px;right:32px;height:5px;border-radius:3px;z-index:1;
     background:linear-gradient(90deg,#FF5E7E,#FFB13D,#23C77E,#4A8CFF,#B65CFF);opacity:.7;}
-  .reel-window{height:172px;overflow:hidden;border-radius:22px;position:relative;background:#F6F5FB;}
+  .reel-window{height:var(--reelH,172px);overflow:hidden;border-radius:22px;position:relative;background:#F6F5FB;}
   .reel-window::before,.reel-window::after{content:"";position:absolute;left:0;right:0;height:46px;z-index:3;pointer-events:none;}
   .reel-window::before{top:0;background:linear-gradient(#F6F5FB,rgba(246,245,251,0));}
   .reel-window::after{bottom:0;background:linear-gradient(rgba(246,245,251,0),#F6F5FB);}
@@ -145,7 +147,7 @@
   .reel-pointer.l{left:-2px;border-left:12px solid var(--jump1);}
   .reel-pointer.r{right:-2px;border-right:12px solid var(--jump1);}
   .reel-strip{display:flex;flex-direction:column;}
-  .reel-item{height:172px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+  .reel-item{height:var(--reelH,172px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
   .reel-item canvas{width:96px;height:96px;}
   .reel-item .nm{font-weight:850;font-size:19px;letter-spacing:-.3px;}
   .reel-cat{font-size:12px;font-weight:800;color:#fff;padding:3px 12px;border-radius:20px;}
@@ -233,7 +235,9 @@
      Sized to FIT a 6.1" phone without scrolling; top floor keeps Champ clear of the Dynamic Island. */
   #done{align-items:center;justify-content:flex-start;text-align:center;
     padding-top:max(calc(var(--safe-t) + 14px), 44px);}
-  #done > :first-child{margin-top:auto;}
+  /* the two .done-half wrappers only matter in landscape; portrait sees the flat column */
+  .done-half{display:contents;}
+  #done .done-bolt{margin-top:auto;}
   /* bolt mascot: stamps in, idles with a bounce, squashes when mashed */
   .done-bolt{width:116px;height:116px;margin-bottom:2px;display:grid;place-items:center;cursor:pointer;
     position:relative;z-index:0;
@@ -364,6 +368,101 @@
   .rowbtn .chev{width:20px;height:20px;color:var(--ink3);flex:none;}
 
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:60;}
+
+  /* ---------- LANDSCAPE (phone held sideways — e.g. propped up during a session) ----------
+     Side-by-side panes so nothing scrolls or clips at ~390px height. max-height keeps iPads
+     and desktops on the portrait-style layout. */
+  @media (orientation:landscape) and (max-height:520px){
+    #app{max-width:960px;}
+    .screen{padding:calc(var(--safe-t) + 10px) calc(var(--safe-r) + 16px) calc(var(--safe-b) + 10px) calc(var(--safe-l) + 16px);}
+
+    /* home: hero left, picks + go right */
+    #home{display:grid;column-gap:clamp(16px,3.5vw,40px);row-gap:10px;
+      grid-template-columns:minmax(0,1fr) minmax(260px,min(56vw,430px));
+      grid-template-rows:auto 1fr auto auto;
+      grid-template-areas:"top top" "mid all" "mid sizes" "mid go";}
+    #home .topbar{grid-area:top;}
+    .home-mid{grid-area:mid;}
+    .home-hero{width:min(36vh,170px);height:min(36vh,170px);}
+    .home-title{font-size:26px;margin-top:2px;}
+    .home-tag{font-size:13.5px;margin-top:4px;}
+    .home-tally{margin-top:8px;}
+    .allmoves-btn{grid-area:all;align-self:end;justify-self:center;margin:0;}
+    .sizes{grid-area:sizes;margin:0;align-self:end;}
+    .size{padding:9px 6px 8px;}
+    .size .snum{font-size:30px;}
+    #btnGo{grid-area:go;font-size:20px;padding:15px 22px;}
+
+    /* spin: smaller machine */
+    #spin{--reelH:140px;}
+    .spin-title{font-size:21px;}
+    .spin-sub{margin-bottom:14px;}
+    .machine{padding:12px;width:min(60vw,330px);}
+    .reel-item canvas{width:72px;height:72px;}
+    .reel-item .nm{font-size:17px;}
+    .reel-window::before,.reel-window::after{height:34px;}
+    .spin-hint{margin-top:10px;}
+
+    /* pack: title + buttons left, list scrolls right */
+    #pack{display:grid;column-gap:clamp(14px,3vw,30px);
+      grid-template-columns:minmax(210px,2fr) minmax(0,3fr);
+      grid-template-rows:1fr auto;
+      grid-template-areas:"head list" "btns list";}
+    .pack-head{grid-area:head;align-self:center;margin:0;}
+    .pack-head h2{font-size:22px;}
+    .pack-list{grid-area:list;margin:0;}
+    .pack-btns{grid-area:btns;flex-direction:column;gap:8px;padding:0;}
+    .pack-btns .btn-primary{font-size:20px;padding:15px 22px;}
+    .pack-btns .btn-ghost{padding:13px 22px;font-size:16px;}
+
+    /* player (ready + work): ring left, words + controls right.
+       .player-mid dissolves (display:contents) so its children join the grid;
+       rows: top / 1fr / phase / num / name / instr(1fr) / btns. */
+    .player{display:grid;column-gap:clamp(18px,4vw,46px);
+      grid-template-columns:auto minmax(0,1fr);
+      grid-template-rows:auto 1fr auto auto auto minmax(0,1fr) auto;}
+    .player-top{grid-area:1/1/2/3;}
+    .player-mid{display:contents;}
+    .timer-wrap{grid-area:2/1/8/2;align-self:center;width:min(58vh,40vw,320px);}
+    #ready .timer-wrap{width:min(62vh,42vw,330px);}
+    .phase-lbl{grid-area:3/2;justify-self:center;margin-bottom:4px;}
+    .count-readout{grid-area:4/2;justify-self:center;font-size:clamp(36px,13vh,54px);margin-top:0;}
+    .work-name{grid-area:5/2;justify-self:center;font-size:26px;margin-top:4px;}
+    #ready .work-name{font-size:28px;margin-top:6px;}
+    .work-instr{grid-area:6/2;justify-self:center;align-self:start;font-size:15px;margin-top:6px;max-width:420px;}
+    .player-btns{grid-area:7/2;justify-self:center;width:100%;max-width:430px;padding-top:8px;}
+    .btn-pause{font-size:18px;padding:14px;}
+    .btn-skip{font-size:16px;padding:14px;}
+    #btnReady{font-size:18px;padding:14px;}
+
+    /* done: champ + stats left, recap + buttons right */
+    #done{flex-direction:row;align-items:center;justify-content:center;gap:clamp(18px,4vw,48px);
+      padding-top:calc(var(--safe-t) + 10px);}
+    .done-half{display:flex;flex-direction:column;align-items:center;min-width:0;}
+    #done .done-bolt{margin-top:0;width:94px;height:94px;}
+    .done-h{font-size:25px;}
+    .done-sub{font-size:13.5px;margin-bottom:8px;}
+    .done-stats{margin-bottom:0;}
+    .dstat{padding:10px 14px;}
+    .dstat .v{font-size:22px;}
+    .recap-head{margin:0 0 6px;}
+    .recap-row{max-width:min(52vw,400px);margin-bottom:10px;} /* ≥4 cards/row so 7-packs stay 2 rows on SE-size phones */
+    .recap-card{width:72px;}
+    .recap-card .rtile{width:34px;height:34px;}
+    .recap-card .rtile canvas{width:30px;height:30px;}
+    .done-btns{flex-direction:row;margin-bottom:0;max-width:360px;}
+    .done-btns .btn-primary{flex:1.3;font-size:19px;padding:14px 18px;}
+    .done-btns .btn-ghost{flex:1;font-size:16px;padding:14px 16px;}
+
+    /* browse: two-up list */
+    .browse-list{display:grid;grid-template-columns:1fr 1fr;column-gap:12px;row-gap:9px;align-content:start;}
+    .browse-cat{grid-column:1/-1;margin:10px 6px 0;}
+    .brow{margin-bottom:0;}
+
+    /* sheets fit short screens */
+    .sheet{max-height:calc(100% - 20px);overflow-y:auto;
+      padding-left:calc(22px + var(--safe-l));padding-right:calc(22px + var(--safe-r));}
+  }
 
   /* ---------- reduced motion (audio stays on) ---------- */
   @media (prefers-reduced-motion: reduce){
@@ -501,6 +600,7 @@
 
   <!-- ============ DONE ============ -->
   <section id="done" class="screen">
+   <div class="done-half">
     <div class="done-bolt" id="doneBolt" role="button" aria-label="Celebrate!">
       <svg viewBox="0 0 26 24" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><g fill="#2A2138"><rect x="6" y="0" width="14" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="20" y="1" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="21" y="2" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="21" y="3" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="21" y="4" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="21" y="5" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/><rect x="16" y="6" width="1" height="1"/><rect x="21" y="6" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="9" y="7" width="2" height="1"/><rect x="15" y="7" width="2" height="1"/><rect x="21" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="9" y="8" width="2" height="1"/><rect x="15" y="8" width="2" height="1"/><rect x="21" y="8" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="21" y="9" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="21" y="10" width="1" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="21" y="11" width="1" height="1"/><rect x="4" y="12" width="1" height="1"/><rect x="21" y="12" width="3" height="1"/><rect x="5" y="13" width="4" height="1"/><rect x="24" y="13" width="1" height="1"/><rect x="8" y="14" width="1" height="1"/><rect x="22" y="14" width="2" height="1"/><rect x="7" y="15" width="1" height="1"/><rect x="19" y="15" width="3" height="1"/><rect x="7" y="16" width="1" height="1"/><rect x="17" y="16" width="2" height="1"/><rect x="6" y="17" width="1" height="1"/><rect x="15" y="17" width="2" height="1"/><rect x="6" y="18" width="1" height="1"/><rect x="13" y="18" width="2" height="1"/><rect x="5" y="19" width="1" height="1"/><rect x="11" y="19" width="2" height="1"/><rect x="4" y="20" width="1" height="1"/><rect x="9" y="20" width="2" height="1"/><rect x="4" y="21" width="1" height="1"/><rect x="7" y="21" width="2" height="1"/><rect x="5" y="22" width="2" height="1"/></g><g fill="#3A1E2A"><rect x="11" y="9" width="4" height="1"/><rect x="11" y="10" width="1" height="1"/><rect x="14" y="10" width="1" height="1"/></g><g fill="#E8960C"><rect x="19" y="1" width="1" height="1"/><rect x="20" y="4" width="1" height="1"/><rect x="20" y="5" width="1" height="1"/><rect x="20" y="6" width="1" height="1"/><rect x="20" y="7" width="1" height="1"/><rect x="20" y="8" width="1" height="1"/><rect x="20" y="9" width="1" height="1"/><rect x="20" y="10" width="1" height="1"/><rect x="20" y="11" width="1" height="1"/><rect x="5" y="12" width="4" height="1"/><rect x="20" y="12" width="1" height="1"/><rect x="22" y="13" width="2" height="1"/><rect x="19" y="14" width="3" height="1"/><rect x="17" y="15" width="2" height="1"/><rect x="15" y="16" width="2" height="1"/><rect x="13" y="17" width="2" height="1"/><rect x="11" y="18" width="2" height="1"/><rect x="9" y="19" width="2" height="1"/><rect x="7" y="20" width="2" height="1"/><rect x="5" y="21" width="2" height="1"/></g><g fill="#FF5E7E"><rect x="5" y="2" width="16" height="1"/></g><g fill="#FF7A93"><rect x="12" y="10" width="2" height="1"/></g><g fill="#FF9D5C"><rect x="5" y="3" width="16" height="1"/></g><g fill="#FF9DB0"><rect x="6" y="9" width="2" height="1"/><rect x="18" y="9" width="2" height="1"/></g><g fill="#FFD23E"><rect x="6" y="1" width="1" height="1"/><rect x="5" y="4" width="15" height="1"/><rect x="5" y="5" width="15" height="1"/><rect x="5" y="6" width="4" height="1"/><rect x="11" y="6" width="4" height="1"/><rect x="17" y="6" width="3" height="1"/><rect x="5" y="7" width="4" height="1"/><rect x="11" y="7" width="4" height="1"/><rect x="17" y="7" width="3" height="1"/><rect x="5" y="8" width="4" height="1"/><rect x="11" y="8" width="4" height="1"/><rect x="17" y="8" width="3" height="1"/><rect x="5" y="9" width="1" height="1"/><rect x="8" y="9" width="3" height="1"/><rect x="15" y="9" width="3" height="1"/><rect x="5" y="10" width="6" height="1"/><rect x="15" y="10" width="5" height="1"/><rect x="5" y="11" width="15" height="1"/><rect x="9" y="12" width="11" height="1"/><rect x="9" y="13" width="12" height="1"/><rect x="9" y="14" width="10" height="1"/><rect x="8" y="15" width="9" height="1"/><rect x="8" y="16" width="7" height="1"/><rect x="7" y="17" width="6" height="1"/><rect x="7" y="18" width="4" height="1"/><rect x="6" y="19" width="3" height="1"/><rect x="5" y="20" width="2" height="1"/></g><g fill="#FFE894"><rect x="7" y="1" width="12" height="1"/><rect x="21" y="13" width="1" height="1"/></g><g fill="#FFFFFF"><rect x="9" y="6" width="1" height="1"/><rect x="15" y="6" width="1" height="1"/></g><g class="spkA"><g fill="#7DE8FF"><rect x="21" y="16" width="1" height="1"/><rect x="20" y="17" width="3" height="1"/><rect x="21" y="18" width="1" height="1"/></g><g fill="#FF5E7E"><rect x="23" y="9" width="1" height="1"/></g></g><g class="spkB"><g fill="#7DE8FF"><rect x="1" y="9" width="1" height="1"/><rect x="0" y="10" width="3" height="1"/><rect x="1" y="11" width="1" height="1"/></g><g fill="#FF5E7E"><rect x="4" y="17" width="1" height="1"/></g></g></svg>
     </div>
@@ -510,12 +610,15 @@
       <div class="dstat"><div class="v"><svg class="ic" viewBox="0 0 48 48" fill="#FFC628" aria-hidden="true"><path d="M20.98 8.17Q22.28 5.94 24.86 5.94L33.46 5.94Q36.04 5.94 34.75 8.17L27.66 20.42Q26.58 22.28 28.73 22.28L35.61 22.28Q37.76 22.28 36.15 23.7L17.01 40.64Q15.4 42.06 16.08 40.02L19.88 28.62Q20.56 26.58 18.41 26.58L12.39 26.58Q10.24 26.58 11.32 24.72Z"/></svg><span id="dMoves">7</span></div><div class="k">moves</div></div>
       <div class="dstat"><div class="v"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#FF5E7E" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 10.5v3.2l2.3 2.3M9.8 2.5h4.4"/></svg><span id="dTime">5m</span></div><div class="k">active</div></div>
     </div>
+   </div>
+   <div class="done-half">
     <div class="recap-head">Tap the ones you loved!</div>
     <div class="recap-row" id="doneRecap"></div>
     <div class="done-btns">
       <button class="btn btn-primary" id="btnAgain">Go Again!</button>
       <button class="btn btn-ghost" id="btnHomeFromDone">Home</button>
     </div>
+   </div>
   </section>
 
   <!-- ============ BROWSE ALL MOVES ============ -->
@@ -1084,7 +1187,7 @@ function doSpin(){
     figFill(cv,ex.p,col[0]);
   });
   strip.style.transition="none"; strip.style.transform="translateY(0)";
-  const itemH=172, finalY=-(fillers.length-1)*itemH;
+  const itemH=strip.firstElementChild.offsetHeight||172, finalY=-(fillers.length-1)*itemH; /* --reelH shrinks in landscape */
   const rm=reduceMotion(); const dur=rm?600:2600;
   let tickTimers=[];
   if(!rm){ for(let t=0;t<22;t++){ const delay=Math.pow(t/22,2)*dur, freq=440+(t/22)*560; tickTimers.push(setTimeout(()=>beep("reel",freq),delay)); } }
