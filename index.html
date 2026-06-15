@@ -190,7 +190,7 @@
   /* FLIP CARDS */
   .flip-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;max-width:340px;margin:0 auto;}
   .flip-card{width:84px;height:104px;perspective:600px;}
-  .flip-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .42s cubic-bezier(.34,1.56,.64,1);}
+  .flip-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .52s cubic-bezier(.34,1.56,.64,1);}
   .flip-inner.flipped{transform:rotateY(180deg);}
   .flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-shadow:var(--shadow);overflow:hidden;}
@@ -1295,7 +1295,7 @@ function setSpinText(k){ const t=REVEAL_TEXT[k]||REVEAL_TEXT.reel; $("spinTitle"
 /* the shared landing beat: payoff sound + confetti, then on to the pack screen */
 function landReveal(rm,x,y){ beep("jackpot"); buzz([50,40,80]);
   if(!rm){ if(x!=null)burst(22,false,x,y); else miniConfetti(); }
-  setTimeout(showPack, rm?240:560); }
+  setTimeout(showPack, rm?320:880); } /* hold on the landed result a beat before the pack screen */
 /* idempotent finisher + auto safety net; each animator also points spinSkip at its own fast-finish */
 function spinFinisher(land,safetyMs){ let done=false;
   const fin=()=>{ if(done)return; done=true; clearTimeout(safety); land(); };
@@ -1404,14 +1404,14 @@ function doPlinko(){
   for(let s=0;s<SLOTS;s++) slotCols.push(s===ti?col:colOf(keys[Math.floor(Math.random()*keys.length)]));
   const rows=H>200?6:5, pegs=[], rowH=(H-90)/rows;
   for(let r=0;r<rows;r++){ const y=44+r*rowH, n=4+(r%2); for(let p=0;p<n;p++) pegs.push({x:W/(n+1)*(p+1),y}); }
-  const targetX=slotW*(ti+0.5), floorY=H-26, grav=H>200?0.45:0.4;
+  const targetX=slotW*(ti+0.5), floorY=H-26, grav=H>200?0.3:0.26; /* lazier drop so kids can follow the bounce */
   let ball={x:W/2,y:14,vx:(Math.random()-.5)*2,vy:0}, raf=null, lastRow=-1;
   function draw(){ g.clearRect(0,0,W,H);
     for(let s=0;s<SLOTS;s++){ g.globalAlpha=s===ti?1:0.4; g.fillStyle=slotCols[s][0]; g.fillRect(s*slotW+3,floorY+2,slotW-6,H-floorY-4); }
     g.globalAlpha=1; g.fillStyle="#D9D5E6"; pegs.forEach(p=>{g.beginPath();g.arc(p.x,p.y,3.2,0,6.28);g.fill();});
     g.fillStyle=col[0]; g.beginPath(); g.arc(ball.x,ball.y,8,0,6.28); g.fill();
     g.fillStyle="rgba(255,255,255,.6)"; g.beginPath(); g.arc(ball.x-2.5,ball.y-2.5,2.6,0,6.28); g.fill(); }
-  const fin=spinFinisher(()=>{ if(raf)cancelAnimationFrame(raf); ball.x=targetX; ball.y=floorY-8; draw(); landReveal(rm); }, rm?700:4500);
+  const fin=spinFinisher(()=>{ if(raf)cancelAnimationFrame(raf); ball.x=targetX; ball.y=floorY-8; draw(); landReveal(rm); }, rm?700:6000);
   function step(){
     ball.vy+=grav; ball.y+=ball.vy; ball.x+=ball.vx;
     ball.vx+=(targetX-ball.x)*0.006; ball.vx*=0.99;
@@ -1444,12 +1444,12 @@ function doFlip(){
     front.appendChild(tile); front.appendChild(nm); inner.appendChild(back); inner.appendChild(front); card.appendChild(inner); row.appendChild(card);
     figFill(fcv,ex.p,"#FFFFFF"); cards.push(inner); });
   stage.appendChild(row);
-  const n=cards.length, dealMs=Math.min((n-1)*60,500)+260;
-  const fin=spinFinisher(()=>{ cards.forEach(c=>c.classList.add("flipped")); landReveal(rm); }, rm?700:dealMs+(n-1)*260+1100);
+  const n=cards.length, dealMs=Math.min((n-1)*60,500)+320, gap=380; /* slower, more deliberate flips */
+  const fin=spinFinisher(()=>{ cards.forEach(c=>c.classList.add("flipped")); landReveal(rm); }, rm?700:dealMs+(n-1)*gap+1300);
   if(rm){ cards.forEach(c=>c.classList.add("flipped")); fin(); return; }
   buzz(20);
-  cards.forEach((c,i)=>setTimeout(()=>{ c.classList.add("flipped"); beep("switch"); },dealMs+i*260));
-  setTimeout(fin, dealMs+(n-1)*260+360);
+  cards.forEach((c,i)=>setTimeout(()=>{ c.classList.add("flipped"); beep("switch"); },dealMs+i*gap));
+  setTimeout(fin, dealMs+(n-1)*gap+440);
   spinSkip=()=>{ cards.forEach(c=>c.classList.add("flipped")); setTimeout(fin,250); };
 }
 
