@@ -152,7 +152,6 @@
   .reel-item .nm{font-weight:850;font-size:19px;letter-spacing:-.3px;}
   .reel-cat{font-size:12px;font-weight:800;color:#fff;padding:3px 12px;border-radius:20px;}
   .spin-hint{margin-top:18px;color:var(--ink3-strong);font-size:13px;font-weight:700;}
-  .machine.thunk{animation:thunk .34s ease-out;}
   @keyframes thunk{0%{transform:translateY(0);}40%{transform:translateY(5px);}72%{transform:translateY(-2px);}100%{transform:translateY(0);}}
   .reel-item.reel-hit{animation:reelHit .5s ease-out;}
   @keyframes reelHit{0%{transform:scale(1);}30%{transform:scale(1.13);}100%{transform:scale(1);}}
@@ -530,7 +529,7 @@
     .pcard{animation:none;}
     .ring-fill{transition:none;}
     .timer-wrap.surging{animation:none;}
-    .machine.thunk,.reel-item.reel-hit{animation:none;}
+    .thunk,.reel-item.reel-hit{animation:none;}
     .btn,.iconbtn,.size{transition:none;}
     #ready .timer-wrap{animation:none;}
     .phase-lbl.surge{animation:none;transform:scale(1.15);opacity:1;}
@@ -546,7 +545,6 @@
     .size.tapped,.home-tally.bump{animation:none;}
     #work .timer-wrap.swap,.ring-svg.ringtick{animation:none;}
     .recap-card{animation:none!important;}
-    .thunk{animation:none;}
     .flip-card.dealin{animation:none;}
     .flip-inner,.wheel{transition:none!important;}
   }
@@ -768,7 +766,7 @@ const CATS = {
   cardio:  {label:"Cardio",  col:["#FF4D6D","#FF8A3D"]},
   balance: {label:"Balance", col:["#00C2D9","#1AE0C2"]},
   core:    {label:"Core",    col:["#FFB13D","#FF7A45"]},
-  dance:   {label:"Dance",   col:["#FF5CB0","#B05CFF"]},
+  dance:   {label:"Dance",   col:["#FF5CB0","#B05CFF"], max:1}, /* max = at most N of this kind per round */
   medball: {label:"Med Ball",col:["#6FCF2A","#BFE65C"]},
 };
 const colOf = c => CATS[c].col;
@@ -1228,19 +1226,27 @@ function renderBrowse(){
 function openBrowse(){ stopFig(); renderBrowse(); show("browse"); }
 
 /* ============ PACK GENERATION ============ */
+/* whole-pack composition limits, shared by makePack and applyFavs: per-category cap
+   (CATS[c].max, e.g. ≤1 dance) and no two look-alike (same-pose) moves. skip = an index
+   to ignore, for in-place swaps (pass -1 to consider the whole pack). */
+function packCapsOk(pack,ex,skip){
+  const cap=CATS[ex.c].max;
+  if(cap&&pack.filter((p,j)=>j!==skip&&p.c===ex.c).length>=cap)return false;
+  if(pack.some((p,j)=>j!==skip&&p.p===ex.p))return false;
+  return true;
+}
 function makePack(n){
-  const pool=shuffle(activeEX()); const pack=[];
-  for(const ex of pool){
-    if(pack.length>=n)break;
+  const pool=shuffle(activeEX()), pack=[];
+  /* relax=false honors the back-to-back-hard rule; relax=true drops only that if we came up short */
+  const fill=relax=>{ for(const ex of pool){ if(pack.length>=n)break; if(pack.includes(ex))continue;
     const prev=pack[pack.length-1];
     if(prev&&prev.c===ex.c)continue;
-    if(prev&&prev.q===3&&ex.q===3)continue;
-    if(ex.c==="dance"&&pack.some(p=>p.c==="dance"))continue; /* at most one dance move per round */
-    if(pack.some(p=>p.p===ex.p))continue;                    /* no two look-alike (same-pose) moves */
-    pack.push(ex);
-  }
-  if(pack.length<n){ for(const ex of pool){ if(pack.length>=n)break; if(pack.includes(ex))continue; const prev=pack[pack.length-1]; if(prev&&prev.c===ex.c)continue; if(ex.c==="dance"&&pack.some(p=>p.c==="dance"))continue; if(pack.some(p=>p.p===ex.p))continue; pack.push(ex); } }
-  if(pack.length<n){ for(const ex of pool){ if(pack.length>=n)break; if(!pack.includes(ex))pack.push(ex); } }
+    if(!relax&&prev&&prev.q===3&&ex.q===3)continue;
+    if(!packCapsOk(pack,ex,-1))continue;
+    pack.push(ex); } };
+  fill(false);
+  if(pack.length<n)fill(true);
+  if(pack.length<n){ for(const ex of pool){ if(pack.length>=n)break; if(!pack.includes(ex))pack.push(ex); } } /* last resort: just fill */
   applyFavs(pack,n);
   return pack.slice(0,n);
 }
@@ -1250,8 +1256,7 @@ function applyFavs(pack,n){
   if(!state.favs.length||!pack.length)return;
   const fits=(idx,e)=>{
     if(pack.some((p,j)=>j!==idx&&p.n===e.n))return false;
-    if(e.c==="dance"&&pack.some((p,j)=>j!==idx&&p.c==="dance"))return false; /* keep ≤1 dance per round */
-    if(pack.some((p,j)=>j!==idx&&p.p===e.p))return false;                    /* no look-alike duplicate */
+    if(!packCapsOk(pack,e,idx))return false; /* same per-category cap + no-dup-pose rules as makePack */
     const prev=pack[idx-1],nxt=pack[idx+1];
     if(prev&&(prev.c===e.c||(prev.q===3&&e.q===3)))return false;
     if(nxt&&(nxt.c===e.c||(nxt.q===3&&e.q===3)))return false;
@@ -1286,8 +1291,8 @@ const REVEAL_TEXT={ reel:["Mixing your moves…","What will you get?"], wheel:["
   plinko:["Drop the ball!","Watch it bounce!"], flip:["Flip your cards!","What's underneath?"] };
 function setSpinText(k){ const t=REVEAL_TEXT[k]||REVEAL_TEXT.reel; $("spinTitle").textContent=t[0]; $("spinSub").textContent=t[1]; }
 /* the shared landing beat: payoff sound + confetti, then on to the pack screen */
-function landReveal(rm,x,y){ beep("jackpot"); buzz([50,40,80]);
-  if(!rm){ if(x!=null)burst(22,false,x,y); else miniConfetti(); }
+function landReveal(rm){ beep("jackpot"); buzz([50,40,80]);
+  if(!rm)miniConfetti();
   setTimeout(showPack, rm?320:880); } /* hold on the landed result a beat before the pack screen */
 /* idempotent finisher + auto safety net; each animator also points spinSkip at its own fast-finish */
 function spinFinisher(land,safetyMs){ let done=false;
@@ -1338,6 +1343,7 @@ function doSpin(){
 function doWheel(){
   const rm=reduceMotion(); setSpinText("wheel");
   const keys=Object.keys(CATS), N=keys.length, seg=360/N, ti=Math.max(0,keys.indexOf(state.pack[0].c)), stage=$("spinStage");
+  const byCat={}; EX.forEach(e=>(byCat[e.c]=byCat[e.c]||[]).push(e)); /* one pass instead of an EX.filter per spoke */
   const wrap=document.createElement("div"); wrap.className="wheel-wrap";
   const wheel=document.createElement("div"); wheel.className="wheel";
   wheel.style.background="conic-gradient("+keys.map((c,i)=>colOf(c)[0]+" "+(i*seg)+"deg "+((i+1)*seg)+"deg").join(",")+")";
@@ -1345,7 +1351,7 @@ function doWheel(){
     const fw=document.createElement("div"); fw.className="wfig";
     const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; fw.appendChild(cv);
     spoke.appendChild(fw); wheel.appendChild(spoke);
-    figFill(cv, (i===ti?state.pack[0]:pick(EX.filter(e=>e.c===c))).p, "#FFFFFF"); });
+    figFill(cv, (i===ti?state.pack[0]:pick(byCat[c])).p, "#FFFFFF"); });
   const hub=document.createElement("div"); hub.className="wheel-hub"; hub.innerHTML=BOLT_MINI;
   const ptr=document.createElement("div"); ptr.className="wheel-ptr";
   wrap.appendChild(wheel); wrap.appendChild(hub); wrap.appendChild(ptr); stage.appendChild(wrap);
@@ -1368,6 +1374,8 @@ function doPlinko(){
   const cv=document.createElement("canvas"); box.appendChild(cv); stage.appendChild(box);
   const W=cv.clientWidth||280, H=Math.round(W*0.8); cv.width=W; cv.height=H;
   const g=cv.getContext("2d"), col=colOf(state.pack[0].c), keys=Object.keys(CATS);
+  /* slots are decorative, NOT category-mapped: a fixed 5 bins, one (ti) painted the winning
+     move's colour and the rest random — don't "fix" this to track CATS like the wheel does. */
   const SLOTS=5, slotW=W/SLOTS, ti=Math.floor(Math.random()*SLOTS), slotCols=[];
   for(let s=0;s<SLOTS;s++) slotCols.push(s===ti?col:colOf(keys[Math.floor(Math.random()*keys.length)]));
   const rows=H>200?6:5, pegs=[], rowH=(H-90)/rows;
@@ -1606,11 +1614,10 @@ function confettiColors(){
   if(hr>=19||hr<6)     return ["#7A6BFF","#4A8CFF","#FF5CB0","#00C2D9","#B65CFF","#FFC628"];  /* evening jewel tones */
   return CCOLORS;
 }
-/* x,y optional: origin of the burst (default = screen centre). Lets a reveal spark at the landed slot. */
-function burst(n,big,x,y){
+function burst(n,big){
   if(reduceMotion())n=Math.max(8,Math.round(n*0.3));
   const cols=confettiColors();
-  const cx=(x==null?cvs.width/2:x), cy=(y==null?(big?cvs.height*.35:cvs.height*.5):y), spread=big?cvs.width*.5:120;
+  const cx=cvs.width/2, cy=big?cvs.height*.35:cvs.height*.5, spread=big?cvs.width*.5:120;
   const parts=[];
   for(let i=0;i<n;i++)parts.push({x:cx+(Math.random()-.5)*spread,y:cy,
     vx:(Math.random()-.5)*(big?14:9),vy:(Math.random()*-1-(big?7:5))*1.2,r:6+Math.random()*8,
