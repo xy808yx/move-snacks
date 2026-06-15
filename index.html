@@ -172,18 +172,6 @@
   .wheel-ptr{position:absolute;left:50%;top:-10px;transform:translateX(-50%);z-index:4;width:0;height:0;
     border-left:15px solid transparent;border-right:15px solid transparent;border-top:26px solid var(--jump1);
     filter:drop-shadow(0 3px 4px rgba(40,30,80,.3));}
-  /* COMPASS */
-  .compass-wrap{position:relative;width:min(74vw,290px);aspect-ratio:1;margin:4px auto;border-radius:50%;
-    background:var(--card);box-shadow:var(--shadow-lg);border:5px solid #fff;}
-  .compass-dot{position:absolute;left:50%;top:50%;width:15%;height:15%;border-radius:50%;transition:transform .25s;
-    box-shadow:0 3px 8px rgba(40,30,80,.18);display:grid;place-items:center;}
-  .compass-dot canvas{width:78%;height:78%;}
-  .compass-dot.hit{box-shadow:0 6px 16px rgba(40,30,80,.32);outline:3px solid #fff;}
-  .compass-needle{position:absolute;left:50%;top:50%;width:6px;height:40%;border-radius:4px;z-index:3;
-    background:linear-gradient(var(--jump1),var(--jump2));transform-origin:50% 100%;
-    transform:translate(-50%,-100%) rotate(0deg);box-shadow:0 2px 6px rgba(40,30,80,.25);will-change:transform;}
-  .compass-center{position:absolute;left:50%;top:50%;width:16px;height:16px;transform:translate(-50%,-50%);
-    border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(40,30,80,.3);z-index:4;}
   /* PLINKO */
   .plinko{width:min(80vw,320px);background:var(--card);border-radius:28px;padding:14px;box-shadow:var(--shadow-lg);border:3px solid #fff;}
   .plinko canvas{display:block;width:100%;border-radius:18px;background:#F6F5FB;}
@@ -471,7 +459,6 @@
     .reel-window::before,.reel-window::after{height:34px;}
     .spin-hint{margin-top:10px;}
     .wheel-wrap{width:min(40vh,230px);margin:2px auto;}
-    .compass-wrap{width:min(40vh,224px);margin:2px auto;}
     .plinko{width:min(58vw,300px);padding:10px;}
     .flip-row{max-width:min(66vw,440px);gap:8px;}
     .flip-card{width:62px;height:78px;}
@@ -561,7 +548,7 @@
     .recap-card{animation:none!important;}
     .thunk{animation:none;}
     .flip-card.dealin{animation:none;}
-    .flip-inner,.compass-needle,.wheel,.compass-dot{transition:none!important;}
+    .flip-inner,.wheel{transition:none!important;}
   }
 </style>
 </head>
@@ -599,7 +586,7 @@
     <button class="btn btn-primary" id="btnGo"><svg class="ic" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M20.98 8.17Q22.28 5.94 24.86 5.94L33.46 5.94Q36.04 5.94 34.75 8.17L27.66 20.42Q26.58 22.28 28.73 22.28L35.61 22.28Q37.76 22.28 36.15 23.7L17.01 40.64Q15.4 42.06 16.08 40.02L19.88 28.62Q20.56 26.58 18.41 26.58L12.39 26.58Q10.24 26.58 11.32 24.72Z"/></svg>Make a Move!</button>
   </section>
 
-  <!-- ============ SPIN (reveal stage: slot reel / wheel / compass / plinko / flip) ============ -->
+  <!-- ============ SPIN (reveal stage: slot reel / wheel / plinko / flip) ============ -->
   <section id="spin" class="screen">
     <div class="spin-title grad-text" id="spinTitle">Mixing your moves…</div>
     <div class="spin-sub" id="spinSub">What will you get?</div>
@@ -782,6 +769,7 @@ const CATS = {
   balance: {label:"Balance", col:["#00C2D9","#1AE0C2"]},
   core:    {label:"Core",    col:["#FFB13D","#FF7A45"]},
   dance:   {label:"Dance",   col:["#FF5CB0","#B05CFF"]},
+  medball: {label:"Med Ball",col:["#6FCF2A","#BFE65C"]},
 };
 const colOf = c => CATS[c].col;
 const gradOf = col => "linear-gradient(135deg,"+col[0]+","+col[1]+")";
@@ -835,6 +823,11 @@ const EX = [
   {n:"Dance Party",p:"dance",c:"dance",q:2,s:60,i:"Show off your very best dance moves!",surge:true},
   {n:"Wiggle Worm",p:"wigglefloor",c:"dance",q:1,s:45,i:"Wiggle every single part of you, head to toes!",surge:true},
   {n:"Robot Dance",p:"robot",c:"dance",q:1,s:45,t:0.85,i:"Move stiff and blocky like a robot!"},
+  {n:"Ball Slams",p:"squatjump",c:"medball",q:3,s:30,i:"Lift the ball up high, then SLAM it to the ground — go!",surge:true},
+  {n:"Ball Squat & Press",p:"squat",c:"medball",q:2,s:35,i:"Squat low with the ball, stand and push it up high!"},
+  {n:"Ball Twists",p:"linehop",c:"medball",q:2,s:35,i:"Hold the ball and twist side to side — tap the floor each side!"},
+  {n:"Ball Throws",p:"box",c:"medball",q:3,s:35,i:"Throw the ball forward, run and grab it, bring it back!"},
+  {n:"Ball Circles",p:"spin",c:"medball",q:1,s:35,i:"Circle the ball around your head — one way, then the other!"},
 ];
 
 const C = 2 * Math.PI * 95;
@@ -1290,7 +1283,7 @@ function applyFavs(pack,n){
    state instantly. makePack() and show("spin") are done once by startSpin(). */
 let spinSkip=null, spinning=false;
 const REVEAL_TEXT={ reel:["Mixing your moves…","What will you get?"], wheel:["Spin the wheel!","Where will it land?"],
-  compass:["Find a move!","Watch it point…"], plinko:["Drop the ball!","Watch it bounce!"], flip:["Flip your cards!","What's underneath?"] };
+  plinko:["Drop the ball!","Watch it bounce!"], flip:["Flip your cards!","What's underneath?"] };
 function setSpinText(k){ const t=REVEAL_TEXT[k]||REVEAL_TEXT.reel; $("spinTitle").textContent=t[0]; $("spinSub").textContent=t[1]; }
 /* the shared landing beat: payoff sound + confetti, then on to the pack screen */
 function landReveal(rm,x,y){ beep("jackpot"); buzz([50,40,80]);
@@ -1344,11 +1337,11 @@ function doSpin(){
 /* ---- prize wheel ---- */
 function doWheel(){
   const rm=reduceMotion(); setSpinText("wheel");
-  const keys=Object.keys(CATS), ti=Math.max(0,keys.indexOf(state.pack[0].c)), stage=$("spinStage");
+  const keys=Object.keys(CATS), N=keys.length, seg=360/N, ti=Math.max(0,keys.indexOf(state.pack[0].c)), stage=$("spinStage");
   const wrap=document.createElement("div"); wrap.className="wheel-wrap";
   const wheel=document.createElement("div"); wheel.className="wheel";
-  wheel.style.background="conic-gradient("+keys.map((c,i)=>colOf(c)[0]+" "+(i*45)+"deg "+((i+1)*45)+"deg").join(",")+")";
-  keys.forEach((c,i)=>{ const spoke=document.createElement("div"); spoke.className="wspoke"; spoke.style.transform="rotate("+(i*45+22.5)+"deg)";
+  wheel.style.background="conic-gradient("+keys.map((c,i)=>colOf(c)[0]+" "+(i*seg)+"deg "+((i+1)*seg)+"deg").join(",")+")";
+  keys.forEach((c,i)=>{ const spoke=document.createElement("div"); spoke.className="wspoke"; spoke.style.transform="rotate("+(i*seg+seg/2)+"deg)";
     const fw=document.createElement("div"); fw.className="wfig";
     const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; fw.appendChild(cv);
     spoke.appendChild(fw); wheel.appendChild(spoke);
@@ -1356,7 +1349,7 @@ function doWheel(){
   const hub=document.createElement("div"); hub.className="wheel-hub"; hub.innerHTML=BOLT_MINI;
   const ptr=document.createElement("div"); ptr.className="wheel-ptr";
   wrap.appendChild(wheel); wrap.appendChild(hub); wrap.appendChild(ptr); stage.appendChild(wrap);
-  const land=360-(ti*45+22.5), targetRot=360*5+land, dur=rm?600:3000;
+  const land=360-(ti*seg+seg/2), targetRot=360*5+land, dur=rm?600:3000;
   wheel.style.transition="none"; wheel.style.transform="rotate(0deg)";
   let ticks=[]; if(!rm){ for(let t=0;t<26;t++){ const d=Math.pow(t/26,1.7)*dur,f=420+(t/26)*620; ticks.push(setTimeout(()=>beep("reel",f),d)); } }
   const fin=spinFinisher(()=>{ ticks.forEach(clearTimeout); if(!rm)replay(wrap,"thunk"); landReveal(rm); }, rm?700:dur+900);
@@ -1365,31 +1358,6 @@ function doWheel(){
   buzz(20);
   spinSkip=()=>{ ticks.forEach(clearTimeout); wheel.style.transition="transform .35s cubic-bezier(.22,1,.36,1)"; wheel.style.transform="rotate("+targetRot+"deg)"; setTimeout(fin,360); };
   if(rm){ wheel.style.transition="none"; wheel.style.transform="rotate("+land+"deg)"; fin(); }
-}
-
-/* ---- compass: needle whirls then magnet-snaps onto your move's dot ---- */
-function doCompass(){
-  const rm=reduceMotion(); setSpinText("compass");
-  const keys=Object.keys(CATS), ti=Math.max(0,keys.indexOf(state.pack[0].c)), stage=$("spinStage");
-  const wrap=document.createElement("div"); wrap.className="compass-wrap"; const dots=[];
-  keys.forEach((c,i)=>{ const a=i*45;
-    const dot=document.createElement("div"); dot.className="compass-dot"; dot.style.background=gradOf(colOf(c));
-    dot.style.transform="translate(-50%,-50%) rotate("+a+"deg) translateY(-260%) rotate("+(-a)+"deg)";
-    const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; dot.appendChild(cv);
-    figFill(cv, (i===ti?state.pack[0]:pick(EX.filter(e=>e.c===c))).p, "#FFFFFF");
-    wrap.appendChild(dot); dots.push(dot); });
-  const needle=document.createElement("div"); needle.className="compass-needle";
-  const center=document.createElement("div"); center.className="compass-center";
-  wrap.appendChild(needle); wrap.appendChild(center); stage.appendChild(wrap);
-  const nT=d=>"translate(-50%,-100%) rotate("+d+"deg)", targetA=ti*45;
-  const fin=spinFinisher(()=>{ dots[ti].classList.add("hit"); landReveal(rm); }, rm?700:2700);
-  if(rm){ needle.style.transition="none"; needle.style.transform=nT(targetA); fin(); return; }
-  let ticks=[]; for(let t=0;t<16;t++){ ticks.push(setTimeout(()=>beep("reel",500+t*40),t*75)); }
-  needle.style.transition="none"; needle.style.transform=nT(0);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{ needle.style.transition="transform 1.3s cubic-bezier(.4,.05,.5,1)"; needle.style.transform=nT(360*3); }));
-  const stage2=setTimeout(()=>{ needle.style.transition="transform .75s cubic-bezier(.34,1.56,.64,1)"; needle.style.transform=nT(360*4+targetA); setTimeout(fin,780); },1320);
-  buzz(20);
-  spinSkip=()=>{ ticks.forEach(clearTimeout); clearTimeout(stage2); needle.style.transition="transform .4s cubic-bezier(.34,1.56,.64,1)"; needle.style.transform=nT(360*4+targetA); setTimeout(fin,420); };
 }
 
 /* ---- plinko: a ball clatters down the pegs into the slot that's your move ---- */
@@ -1453,7 +1421,7 @@ function doFlip(){
   spinSkip=()=>{ cards.forEach(c=>c.classList.add("flipped")); setTimeout(fin,250); };
 }
 
-const REVEALS=[doSpin,doWheel,doCompass,doPlinko,doFlip];
+const REVEALS=[doSpin,doWheel,doPlinko,doFlip];
 
 /* ============ PACK SCREEN ============ */
 function showPack(){
