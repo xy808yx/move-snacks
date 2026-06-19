@@ -826,6 +826,8 @@ const EX = [
   {n:"Ball Twists",p:"linehop",c:"medball",q:2,s:35,i:"Hold the ball and twist side to side — tap the floor each side!"},
   {n:"Ball Throws",p:"box",c:"medball",q:3,s:35,i:"Throw the ball forward, run and grab it, bring it back!"},
   {n:"Ball Circles",p:"spin",c:"medball",q:1,s:35,i:"Circle the ball around your head — one way, then the other!"},
+  {n:"Ball Long Jump",p:"longjump",c:"medball",q:3,s:30,i:"Squat down low with the ball, then JUMP forward and throw it out — land soft and go get it!"},
+  {n:"Ball Rocket Jump",p:"rocketjump",c:"medball",q:3,s:30,i:"Ball down low, then JUMP and shoot it up high like a rocket — watch it land, then go get it!"},
 ];
 
 const C = 2 * Math.PI * 95;
@@ -940,6 +942,11 @@ const POSES = {
   wigglefloor:[[14,19,-82, 22,4, 16,-2, 190,206, 196,212],[15,21,-96, 8,20, 2,14, 206,188, 212,194]],
   tree:[[16,16,0, 112,78, 68,102, 232,72, 271,271],[16,16,1, 110,80, 70,100, 234,68, 270,270]],
   linehop:[[16,17,13, 205,205, 250,240, 238,256, 248,262],[16,17,-13, 335,335, 290,300, 292,278, 302,284]],
+  /* med-ball throws: load (ball low) -> explosive release. longjump = scoop the ball low & forward
+     then drive forward + launch it out ahead (loaded broad jump). rocketjump = ball low between the
+     legs, then triple-extend tall and shoot it up & slightly forward (kept up-front, never backward). */
+  longjump:[[16,17,10, 326,326, 326,326, 312,272, 312,272],[17,13,28, 32,32, 32,32, 250,250, 250,250]],
+  rocketjump:[[16,18,8, 268,268, 272,272, 315,266, 315,266],[16,12,8, 76,76, 84,84, 272,272, 272,272]],
 };
 
 /* same-kid normalization: ONE global scale (set by the most-constrained pose) so the
@@ -993,7 +1000,7 @@ function figFillLerp(cv,pose,hex,u){
 let figRAF=null, figCv=null, figPose=null, figHex=null, figLast=0, figT=0, figSpeed=1, figTempo=1, figTMul=1;
 const FIG_CYCLE_MS=820;
 /* per-pose tempo: >1 faster, <1 slower (default 1) */
-const POSE_TEMPO={ run:1.8, climber:1.6, jack:1.4, pogo:1.45, box:1.55, bicycle:1.4, tuck:1.35, squatjump:1.25, skater:1.15, dance:1.1, gorilla:1.15, crab:1.1,
+const POSE_TEMPO={ run:1.8, climber:1.6, jack:1.4, pogo:1.45, box:1.55, bicycle:1.4, tuck:1.35, squatjump:1.25, longjump:1.15, rocketjump:1.15, skater:1.15, dance:1.1, gorilla:1.15, crab:1.1,
   cheetah:1.9, toetap:1.7, bunny:1.5, linehop:1.5, duck:1.0, frog:0.9, wigglefloor:0.9,
   flamingo:0.55, deadbug:0.5, linewalk:0.6, plank:0.5, wallsit:0.5, superman:0.55, calf:0.75, boat:0.55, spin:0.7, inchworm:0.7, situp:0.85, lunge:0.85, robot:0.9, tree:0.55 };
 /* tMul = optional per-exercise tempo override (EX `t:` field) on top of the pose tempo */
