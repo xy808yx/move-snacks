@@ -87,7 +87,7 @@
   .grad-text{background:linear-gradient(135deg,#FF5E7E 18%,#FF9D5C 82%);
     -webkit-background-clip:text;background-clip:text;color:#FF5E7E;-webkit-text-fill-color:transparent;}
   .btn:focus-visible,.iconbtn:focus-visible,.allmoves-btn:focus-visible,.star-btn:focus-visible,
-  .toggle:focus-visible,.seg button:focus-visible,.linkbtn:focus-visible,.rowbtn:focus-visible{
+  .toggle:focus-visible,.seg button:focus-visible,.linkbtn:focus-visible{
     outline:3px solid #7A6BFF;outline-offset:2px;}
 
   /* ---------- HOME ---------- */
@@ -328,7 +328,7 @@
     padding:11px 18px;border-radius:16px;display:inline-flex;align-items:center;gap:7px;}
   .allmoves-btn svg.ic{width:14px;height:14px;color:#FFB13D;}
   .allmoves-btn:active{transform:scale(.95);}
-  .fav-hint{font-size:13px;font-weight:700;color:var(--ink3);background:var(--card);border-radius:16px;
+  .fav-hint{font-size:13px;font-weight:700;color:var(--ink2);background:var(--card);border-radius:16px;
     padding:14px;text-align:center;box-shadow:var(--shadow);margin-bottom:8px;}
 
   /* ---------- overlays ---------- */
@@ -336,6 +336,7 @@
     display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;}
   .overlay.on{opacity:1;visibility:visible;}
   .sheet{background:#fff;width:100%;max-width:520px;border-radius:30px 30px 0 0;padding:10px 22px calc(22px + var(--safe-b));
+    max-height:calc(100% - var(--safe-t) - 12px);overflow-y:auto;overscroll-behavior:contain;
     transform:translateY(100%);transition:transform .36s cubic-bezier(.22,1,.36,1);}
   .overlay.on .sheet{transform:none;}
   .sheet .grip{width:44px;height:5px;border-radius:3px;background:#E2DEEC;margin:6px auto 14px;}
@@ -401,10 +402,6 @@
   .brow .bdur small{display:block;font-size:9.5px;font-weight:800;color:var(--ink3);letter-spacing:.6px;margin-top:2px;text-transform:uppercase;}
   .intens{display:inline-flex;gap:3px;flex:none;}
   .intens i{width:6px;height:6px;border-radius:50%;display:inline-block;}
-  .rowbtn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:15px 0;
-    border:none;border-top:1px solid var(--line);background:none;cursor:pointer;font-family:inherit;color:inherit;text-align:left;}
-  .rowbtn:active{opacity:.6;}
-  .rowbtn .chev{width:20px;height:20px;color:var(--ink3);flex:none;}
 
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:60;}
 
@@ -537,7 +534,7 @@
     .done-bolt,.done-bolt.poke,.done-bolt .spkA,.done-bolt .spkB{animation:none;}
     .btn-primary::after{display:none;}
     .spark,.hero-wrap::before,.done-bolt::before{animation:none;}
-    .ready-num.pop{animation:none;}
+    .ready-num.pop{animation:none;opacity:1;}
     .count-readout.tickpop{animation:none;}
     .dot.done{animation:none;}
     #done.reveal .done-h,#done.reveal .done-sub,#done.reveal .done-stats{animation:none;}
@@ -664,7 +661,7 @@
   <!-- ============ DONE ============ -->
   <section id="done" class="screen">
    <div class="done-half">
-    <div class="done-bolt" id="doneBolt" role="button" aria-label="Celebrate!">
+    <div class="done-bolt" id="doneBolt" aria-hidden="true">
       <svg viewBox="0 0 26 24" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><g fill="#2A2138"><rect x="6" y="0" width="14" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="20" y="1" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="21" y="2" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="21" y="3" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="21" y="4" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="21" y="5" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="10" y="6" width="1" height="1"/><rect x="16" y="6" width="1" height="1"/><rect x="21" y="6" width="1" height="1"/><rect x="4" y="7" width="1" height="1"/><rect x="9" y="7" width="2" height="1"/><rect x="15" y="7" width="2" height="1"/><rect x="21" y="7" width="1" height="1"/><rect x="4" y="8" width="1" height="1"/><rect x="9" y="8" width="2" height="1"/><rect x="15" y="8" width="2" height="1"/><rect x="21" y="8" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="21" y="9" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="21" y="10" width="1" height="1"/><rect x="4" y="11" width="1" height="1"/><rect x="21" y="11" width="1" height="1"/><rect x="4" y="12" width="1" height="1"/><rect x="21" y="12" width="3" height="1"/><rect x="5" y="13" width="4" height="1"/><rect x="24" y="13" width="1" height="1"/><rect x="8" y="14" width="1" height="1"/><rect x="22" y="14" width="2" height="1"/><rect x="7" y="15" width="1" height="1"/><rect x="19" y="15" width="3" height="1"/><rect x="7" y="16" width="1" height="1"/><rect x="17" y="16" width="2" height="1"/><rect x="6" y="17" width="1" height="1"/><rect x="15" y="17" width="2" height="1"/><rect x="6" y="18" width="1" height="1"/><rect x="13" y="18" width="2" height="1"/><rect x="5" y="19" width="1" height="1"/><rect x="11" y="19" width="2" height="1"/><rect x="4" y="20" width="1" height="1"/><rect x="9" y="20" width="2" height="1"/><rect x="4" y="21" width="1" height="1"/><rect x="7" y="21" width="2" height="1"/><rect x="5" y="22" width="2" height="1"/></g><g fill="#3A1E2A"><rect x="11" y="9" width="4" height="1"/><rect x="11" y="10" width="1" height="1"/><rect x="14" y="10" width="1" height="1"/></g><g fill="#E8960C"><rect x="19" y="1" width="1" height="1"/><rect x="20" y="4" width="1" height="1"/><rect x="20" y="5" width="1" height="1"/><rect x="20" y="6" width="1" height="1"/><rect x="20" y="7" width="1" height="1"/><rect x="20" y="8" width="1" height="1"/><rect x="20" y="9" width="1" height="1"/><rect x="20" y="10" width="1" height="1"/><rect x="20" y="11" width="1" height="1"/><rect x="5" y="12" width="4" height="1"/><rect x="20" y="12" width="1" height="1"/><rect x="22" y="13" width="2" height="1"/><rect x="19" y="14" width="3" height="1"/><rect x="17" y="15" width="2" height="1"/><rect x="15" y="16" width="2" height="1"/><rect x="13" y="17" width="2" height="1"/><rect x="11" y="18" width="2" height="1"/><rect x="9" y="19" width="2" height="1"/><rect x="7" y="20" width="2" height="1"/><rect x="5" y="21" width="2" height="1"/></g><g fill="#FF5E7E"><rect x="5" y="2" width="16" height="1"/></g><g fill="#FF7A93"><rect x="12" y="10" width="2" height="1"/></g><g fill="#FF9D5C"><rect x="5" y="3" width="16" height="1"/></g><g fill="#FF9DB0"><rect x="6" y="9" width="2" height="1"/><rect x="18" y="9" width="2" height="1"/></g><g fill="#FFD23E"><rect x="6" y="1" width="1" height="1"/><rect x="5" y="4" width="15" height="1"/><rect x="5" y="5" width="15" height="1"/><rect x="5" y="6" width="4" height="1"/><rect x="11" y="6" width="4" height="1"/><rect x="17" y="6" width="3" height="1"/><rect x="5" y="7" width="4" height="1"/><rect x="11" y="7" width="4" height="1"/><rect x="17" y="7" width="3" height="1"/><rect x="5" y="8" width="4" height="1"/><rect x="11" y="8" width="4" height="1"/><rect x="17" y="8" width="3" height="1"/><rect x="5" y="9" width="1" height="1"/><rect x="8" y="9" width="3" height="1"/><rect x="15" y="9" width="3" height="1"/><rect x="5" y="10" width="6" height="1"/><rect x="15" y="10" width="5" height="1"/><rect x="5" y="11" width="15" height="1"/><rect x="9" y="12" width="11" height="1"/><rect x="9" y="13" width="12" height="1"/><rect x="9" y="14" width="10" height="1"/><rect x="8" y="15" width="9" height="1"/><rect x="8" y="16" width="7" height="1"/><rect x="7" y="17" width="6" height="1"/><rect x="7" y="18" width="4" height="1"/><rect x="6" y="19" width="3" height="1"/><rect x="5" y="20" width="2" height="1"/></g><g fill="#FFE894"><rect x="7" y="1" width="12" height="1"/><rect x="21" y="13" width="1" height="1"/></g><g fill="#FFFFFF"><rect x="9" y="6" width="1" height="1"/><rect x="15" y="6" width="1" height="1"/></g><g class="spkA"><g fill="#7DE8FF"><rect x="21" y="16" width="1" height="1"/><rect x="20" y="17" width="3" height="1"/><rect x="21" y="18" width="1" height="1"/></g><g fill="#FF5E7E"><rect x="23" y="9" width="1" height="1"/></g></g><g class="spkB"><g fill="#7DE8FF"><rect x="1" y="9" width="1" height="1"/><rect x="0" y="10" width="3" height="1"/><rect x="1" y="11" width="1" height="1"/></g><g fill="#FF5E7E"><rect x="4" y="17" width="1" height="1"/></g></g></svg>
     </div>
     <div class="done-h grad-text">Snack Crushed!</div>
@@ -701,7 +698,7 @@
   <div class="sheet">
     <div class="grip"></div>
     <h3>Settings</h3>
-    <div class="setrow"><div class="lab">Sound effects<small id="soundSub">Beeps &amp; cheers — plays even on silent mode</small></div><div class="toggle" id="tgSound"></div></div>
+    <div class="setrow"><div class="lab">Sound effects<small id="soundSub">Beeps &amp; cheers. Plays even on silent mode</small></div><div class="toggle" id="tgSound" role="switch" tabindex="0" aria-label="Sound effects"></div></div>
     <div class="setrow" id="volRow" style="flex-direction:column;align-items:stretch;gap:10px;">
       <div class="lab">Volume<small>How loud the beeps &amp; cheers are</small></div>
       <div class="volwrap">
@@ -710,7 +707,7 @@
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6.5 9H3v6h3.5L11 19z" fill="currentColor" stroke="none"/><path d="M14.5 9.8a4 4 0 0 1 0 4.4M16.8 7.5a7 7 0 0 1 0 9"/></svg>
       </div>
     </div>
-    <div class="setrow" id="mixRow"><div class="lab">Music stays on<small>Don't pause Spotify &amp; podcasts — but beeps go quiet when the phone is on silent</small></div><div class="toggle" id="tgMix"></div></div>
+    <div class="setrow" id="mixRow"><div class="lab">Music stays on<small>Don't pause Spotify &amp; podcasts, but beeps go quiet when the phone is on silent</small></div><div class="toggle" id="tgMix" role="switch" tabindex="0" aria-label="Music stays on"></div></div>
     <div class="setrow" style="flex-direction:column;align-items:stretch;gap:12px;">
       <div class="lab">How hard?<small>Changes how long each move lasts</small></div>
       <div class="seg" id="segDiff">
@@ -740,7 +737,7 @@
 <div class="overlay" id="confirmOverlay">
   <div class="confirm-card">
     <h4 id="cfTitle">Leave your moves?</h4>
-    <p id="cfText">You're doing great — don't stop now!</p>
+    <p id="cfText">You're doing great, don't stop now!</p>
     <div class="row">
       <button class="btn btn-ghost" id="cfNo">Keep going</button>
       <button class="btn btn-primary" id="cfYes" style="background:linear-gradient(135deg,#9aa0b5,#c0c4d4);box-shadow:none;">Leave</button>
@@ -775,59 +772,59 @@ const gradOf = col => "linear-gradient(135deg,"+col[0]+","+col[1]+")";
 /* ---------- exercises ----------
    p = pixel-art pose id (see POSES), s = work seconds, q = intensity (1 calm·2 moderate·3 vigorous) */
 const EX = [
-  {n:"Star Jumps",p:"jack",c:"jump",q:3,s:30,i:"Jump up big and wide like a star — keep going!",surge:true},
-  {n:"Tuck Jumps",p:"tuck",c:"jump",q:3,s:25,t:1.1,i:"Jump and pull your knees up high — about 10 jumps!"},
+  {n:"Star Jumps",p:"jack",c:"jump",q:3,s:30,i:"Jump up big and wide like a star, keep going!",surge:true},
+  {n:"Tuck Jumps",p:"tuck",c:"jump",q:3,s:25,t:1.1,i:"Jump and pull your knees up high, about 10 jumps!"},
   {n:"Broad Jumps",p:"broad",c:"jump",q:3,s:35,t:0.9,i:"Leap forward as far as you can, turn around, go back!"},
   {n:"Pogo Hops",p:"pogo",c:"jump",q:2,s:40,t:1.1,i:"Bounce on your tippy toes, light and springy!",surge:true},
   {n:"Skater Hops",p:"skater",c:"jump",q:3,s:30,i:"Leap side to side and stick each landing!"},
-  {n:"Squat Jumps",p:"squatjump",c:"jump",q:3,s:25,t:1.15,i:"Squat low, then jump up tall — about 8 times!"},
-  {n:"Line Hops",p:"linehop",c:"jump",q:2,s:35,t:1.15,i:"Hop side to side over a pretend line — fast feet!",surge:true},
+  {n:"Squat Jumps",p:"squatjump",c:"jump",q:3,s:25,t:1.15,i:"Squat low, then jump up tall, about 8 times!"},
+  {n:"Line Hops",p:"linehop",c:"jump",q:2,s:35,t:1.15,i:"Hop side to side over a pretend line, fast feet!",surge:true},
   {n:"Bear Crawl",p:"bear",c:"animal",q:2,s:45,i:"Crawl on hands and feet across the room and back!"},
-  {n:"Crab Walk",p:"crab",c:"animal",q:2,s:45,i:"Belly up — crab walk forward, then walk back!"},
-  {n:"Frog Jumps",p:"frog",c:"animal",q:3,s:30,i:"Squat low and leap like a frog — about 10 leaps!"},
-  {n:"Bunny Hops",p:"bunny",c:"animal",q:2,s:35,i:"Feet together — hop forward, then hop back!"},
+  {n:"Crab Walk",p:"crab",c:"animal",q:2,s:45,i:"Belly up, crab walk forward, then walk back!"},
+  {n:"Frog Jumps",p:"frog",c:"animal",q:3,s:30,i:"Squat low and leap like a frog, about 10 leaps!"},
+  {n:"Bunny Hops",p:"bunny",c:"animal",q:2,s:35,i:"Feet together, hop forward, then hop back!"},
   {n:"Gorilla Shuffle",p:"gorilla",c:"animal",q:2,s:40,i:"Stay low and shuffle side to side!"},
-  {n:"Inchworm",p:"inchworm",c:"animal",q:1,s:40,i:"Walk your hands out far, then tiptoe your feet up — repeat!"},
+  {n:"Inchworm",p:"inchworm",c:"animal",q:1,s:40,i:"Walk your hands out far, then tiptoe your feet up, repeat!"},
   {n:"Duck Walk",p:"duck",c:"animal",q:2,s:35,i:"Squat low and waddle across the room and back!"},
   {n:"Crab Kicks",p:"crab",c:"animal",q:2,s:35,i:"In crab pose, kick one leg up, then the other!"},
   {n:"Cheetah Run",p:"cheetah",c:"animal",q:3,s:25,t:1.25,i:"Run in place as fast as a cheetah!",surge:true},
   {n:"Stair Climbs",p:"climb",c:"stairs",q:2,s:45,t:0.85,i:"Walk up and down the stairs, steady and safe!"},
   {n:"Toe Taps",p:"toetap",c:"stairs",q:3,s:30,i:"Tap your toes on the bottom step, fast as you can!"},
-  {n:"Two-Step Hops",p:"climb",c:"stairs",q:3,s:35,i:"Hop up two steps, walk down — hold the rail!"},
+  {n:"Two-Step Hops",p:"climb",c:"stairs",q:3,s:35,i:"Hop up two steps, walk down, hold the rail!"},
   {n:"Bear Stairs",p:"bear",c:"stairs",q:2,s:40,i:"Crawl up the stairs like a bear, then walk down!"},
-  {n:"Stair Sprints",p:"run",c:"stairs",q:3,s:35,t:1.15,i:"Run up, walk down — and repeat!"},
-  {n:"Squats",p:"squat",c:"strength",q:2,s:40,i:"Sit back like a chair and stand — about 12 squats!"},
+  {n:"Stair Sprints",p:"run",c:"stairs",q:3,s:35,t:1.15,i:"Run up, walk down, and repeat!"},
+  {n:"Squats",p:"squat",c:"strength",q:2,s:40,i:"Sit back like a chair and stand, about 12 squats!"},
   {n:"Wall Sit",p:"wallsit",c:"strength",q:2,s:25,i:"Hold your invisible chair against the wall!"},
-  {n:"Knee Push-Ups",p:"pushup",c:"strength",q:2,s:30,i:"Push up and down from your knees — about 8!"},
-  {n:"Superman",p:"superman",c:"strength",q:1,s:25,i:"On your belly, lift arms and legs — hold and fly!"},
-  {n:"Lunges",p:"lunge",c:"strength",q:2,s:35,i:"Step forward and bend — about 5 on each leg!"},
-  {n:"Calf Raises",p:"calf",c:"strength",q:1,s:35,i:"Push up on tippy toes and down — keep going!"},
+  {n:"Knee Push-Ups",p:"pushup",c:"strength",q:2,s:30,i:"Push up and down from your knees, about 8!"},
+  {n:"Superman",p:"superman",c:"strength",q:1,s:25,i:"On your belly, lift arms and legs, hold and fly!"},
+  {n:"Lunges",p:"lunge",c:"strength",q:2,s:35,i:"Step forward and bend, about 5 on each leg!"},
+  {n:"Calf Raises",p:"calf",c:"strength",q:1,s:35,i:"Push up on tippy toes and down, keep going!"},
   {n:"Plank",p:"plank",c:"strength",q:2,s:25,i:"Hold strong and flat like a board!"},
   {n:"High Knees",p:"run",c:"cardio",q:3,s:30,t:0.95,i:"Run on the spot, lifting your knees up high!",surge:true},
-  {n:"Jumping Jacks",p:"jack",c:"cardio",q:3,s:30,i:"Arms and legs jump out and in — find a rhythm!",surge:true},
+  {n:"Jumping Jacks",p:"jack",c:"cardio",q:3,s:30,i:"Arms and legs jump out and in, find a rhythm!",surge:true},
   {n:"Mountain Climbers",p:"climber",c:"cardio",q:3,s:30,i:"Hands on the floor, run your knees in fast!",surge:true},
   {n:"Fast Feet",p:"run",c:"cardio",q:3,s:25,t:1.3,i:"Tiny super-fast steps, stay light on your toes!",surge:true},
-  {n:"Shadow Boxing",p:"box",c:"cardio",q:2,s:45,i:"Punch the air — left, right, left, right!",surge:true},
+  {n:"Shadow Boxing",p:"box",c:"cardio",q:2,s:45,i:"Punch the air, left, right, left, right!",surge:true},
   {n:"Speed Skaters",p:"skater",c:"cardio",q:3,s:30,i:"Big slides side to side, swing your arms!"},
   {n:"Flamingo Stand",p:"flamingo",c:"balance",q:1,s:30,i:"Stand on one leg… switch halfway. Stay still!"},
   {n:"Line Walk",p:"linewalk",c:"balance",q:1,s:35,i:"Walk heel-to-toe along a line, slow and steady!"},
   {n:"Spin & Freeze",p:"spin",c:"balance",q:2,s:35,i:"Spin around slow, then FREEZE super still!"},
-  {n:"Tree Pose",p:"tree",c:"balance",q:1,s:30,i:"Stand tall and still like a strong tree — switch legs!"},
-  {n:"Sit-Ups",p:"situp",c:"core",q:2,s:35,i:"Lie down, then sit all the way up — about 10!"},
-  {n:"Bicycle Legs",p:"bicycle",c:"core",q:2,s:40,i:"On your back, pedal a bike — keep pedaling!"},
-  {n:"Dead Bug",p:"deadbug",c:"core",q:1,s:40,i:"On your back — float one arm back, the other leg out!"},
-  {n:"Boat Hold",p:"boat",c:"core",q:2,s:20,i:"Sit tall, lift your feet, balance like a boat — hold!"},
+  {n:"Tree Pose",p:"tree",c:"balance",q:1,s:30,i:"Stand tall and still like a strong tree, switch legs!"},
+  {n:"Sit-Ups",p:"situp",c:"core",q:2,s:35,i:"Lie down, then sit all the way up, about 10!"},
+  {n:"Bicycle Legs",p:"bicycle",c:"core",q:2,s:40,i:"On your back, pedal a bike, keep pedaling!"},
+  {n:"Dead Bug",p:"deadbug",c:"core",q:1,s:40,i:"On your back, float one arm back, the other leg out!"},
+  {n:"Boat Hold",p:"boat",c:"core",q:2,s:20,i:"Sit tall, lift your feet, balance like a boat, hold!"},
   {n:"Freeze Dance",p:"dance",c:"dance",q:2,s:60,t:1.1,i:"Dance wild… then FREEZE! Then dance again!",surge:true},
   {n:"Dance Party",p:"dance",c:"dance",q:2,s:60,i:"Show off your very best dance moves!",surge:true},
   {n:"Wiggle Worm",p:"wigglefloor",c:"dance",q:1,s:45,i:"Wiggle every single part of you, head to toes!",surge:true},
   {n:"Robot Dance",p:"robot",c:"dance",q:1,s:45,t:0.85,i:"Move stiff and blocky like a robot!"},
-  {n:"Ball Slams",p:"squatjump",c:"medball",q:3,s:30,i:"Lift the ball up high, then SLAM it to the ground — go!",surge:true},
+  {n:"Ball Slams",p:"squatjump",c:"medball",q:3,s:30,i:"Lift the ball up high, then SLAM it to the ground, go!",surge:true},
   {n:"Ball Squat & Press",p:"squat",c:"medball",q:2,s:35,i:"Squat low with the ball, stand and push it up high!"},
-  {n:"Ball Twists",p:"linehop",c:"medball",q:2,s:35,i:"Hold the ball and twist side to side — tap the floor each side!"},
+  {n:"Ball Twists",p:"linehop",c:"medball",q:2,s:35,i:"Hold the ball and twist side to side, tap the floor each side!"},
   {n:"Ball Throws",p:"box",c:"medball",q:3,s:35,i:"Throw the ball forward, run and grab it, bring it back!"},
-  {n:"Ball Circles",p:"spin",c:"medball",q:1,s:35,i:"Circle the ball around your head — one way, then the other!"},
-  {n:"Ball Long Jump",p:"longjump",c:"medball",q:3,s:45,i:"Squat low with the ball, then JUMP forward and throw it out — land soft, go get it! About 5 big throws."},
-  {n:"Ball Rocket Jump",p:"rocketjump",c:"medball",q:3,s:45,i:"Ball down low, then JUMP and shoot it up high like a rocket — watch it land, go get it! About 5 big throws."},
+  {n:"Ball Circles",p:"spin",c:"medball",q:1,s:35,i:"Circle the ball around your head, one way, then the other!"},
+  {n:"Ball Long Jump",p:"longjump",c:"medball",q:3,s:45,i:"Squat low with the ball, then JUMP forward and throw it out, land soft, go get it! About 5 big throws."},
+  {n:"Ball Rocket Jump",p:"rocketjump",c:"medball",q:3,s:45,i:"Ball down low, then JUMP and shoot it up high like a rocket, watch it land, go get it! About 5 big throws."},
 ];
 
 const C = 2 * Math.PI * 95;
@@ -1131,7 +1128,7 @@ function beep(kind,arg){
 }
 /* ---------- encouragement strings (shown on screen, not spoken) ---------- */
 const MID_CHEER=["You're crushing it!","Keep it up!","Looking strong!","So good!","Yes! Keep going!","Wow, awesome!"];
-const FINISH=["You're a movement superstar!","Your body says thank you!","Brain recharged — let's learn!","Strong work, athlete!","You've got the zoomies!","That was awesome moving!"];
+const FINISH=["You're a movement superstar!","Your body says thank you!","Brain recharged. Let's learn!","Strong work, athlete!","You've got the zoomies!","That was awesome moving!"];
 const QUIPS=["Boing!","Again!","Zap!","Zoom!","Wheee!","Pow!","Yeah!","Woo!"]; let lastQuip=0;
 function buzz(ms){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
 
@@ -1146,7 +1143,7 @@ document.addEventListener("visibilitychange",()=>{
   } else {
     if(cur==="ready"&&cd)cd.resume();
     if(cur==="work"||cur==="ready")keepAwake(); /* OS releases the lock on hide; re-grab it */
-    if(state.sound)claimAudioSession(); /* iOS pauses the session keeper on hide; resume it */
+    if(state.sound)ensureAudio(); /* iOS suspends the audio context AND pauses the session keeper on hide; ensureAudio resumes both */
   }
 });
 
@@ -1182,8 +1179,8 @@ function renderHome(){
 /* ---------- star toggle button (browse rows + done-screen recap) ---------- */
 function makeStarBtn(name,onToggle){
   const st=document.createElement("button"); st.className="star-btn"+(isFav(name)?" on":""); st.innerHTML=STAR_SVG;
-  st.setAttribute("aria-label","Favorite "+name);
-  st.addEventListener("click",()=>{ toggleFav(name); beep("sparkle"); buzz(10); onToggle(st); });
+  st.setAttribute("aria-label","Favorite "+name); st.setAttribute("aria-pressed",isFav(name)?"true":"false");
+  st.addEventListener("click",()=>{ toggleFav(name); st.setAttribute("aria-pressed",isFav(name)?"true":"false"); beep("sparkle"); buzz(10); onToggle(st); });
   return st;
 }
 
@@ -1253,7 +1250,9 @@ function makePack(n){
     pack.push(ex); } };
   fill(false);
   if(pack.length<n)fill(true);
-  if(pack.length<n){ for(const ex of pool){ if(pack.length>=n)break; if(!pack.includes(ex))pack.push(ex); } } /* last resort: just fill */
+  /* last resort: relax only the pacing rules but still never duplicate a pose or exceed a category cap
+     (a shorter pack beats two identical-looking cards when a tight category filter starves the pool) */
+  if(pack.length<n){ for(const ex of pool){ if(pack.length>=n)break; if(!pack.includes(ex)&&packCapsOk(pack,ex,-1))pack.push(ex); } }
   applyFavs(pack,n);
   return pack.slice(0,n);
 }
@@ -1284,7 +1283,10 @@ function applyFavs(pack,n){
         if(fits(idx,f)){pack[idx]=f;return;}
       }
     }
-    if(candidates[0])pack[Math.floor(Math.random()*pack.length)]=candidates[0]; /* last resort */
+    if(candidates[0]){ /* last resort: still prefer a slot that keeps no-dup-pose + category caps */
+      const slots=shuffle(pack.map((_,i)=>i)), okIdx=slots.find(i=>packCapsOk(pack,candidates[0],i));
+      pack[okIdx!==undefined?okIdx:slots[0]]=candidates[0];
+    }
   }
 }
 
@@ -1308,7 +1310,7 @@ function spinFinisher(land,safetyMs){ let done=false;
 
 function startSpin(){
   if(spinning)return; spinning=true;            /* re-entry guard: excited double-taps can't stack two reveals */
-  ensureAudio(); stopFig();
+  ensureAudio(); stopFig(); stopConfetti();     /* clear any lingering Done-screen confetti before the next reveal */
   state.pack=makePack(state.count||5);
   justFinished=false;                           /* fresh session — cancel any pending home-tally bump */
   $("spinStage").innerHTML="";
@@ -1566,8 +1568,8 @@ function runExercise(i){
 function next(){ const n=state.idx+1; if(n>=state.pack.length)finishWorkout(); else goReady(n); }
 function togglePause(){
   if(!cd)return;
-  if(cd.isPaused()){ cd.resume(); startFig(figCv,figPose,figHex,figTMul); setPauseUI(false); setPhase("Move!"); beep("resume"); buzz(15); }
-  else { cd.pause(); stopFig(); clearTimeout(surgeTimer); setPauseUI(true); setPhase("Paused"); beep("pause"); buzz(15); }
+  if(cd.isPaused()){ if(state.sound)ensureAudio(); cd.resume(); startFig(figCv,figPose,figHex,figTMul); setPauseUI(false); setPhase("Move!"); beep("resume"); buzz(15); }
+  else { cd.pause(); stopFig(); clearTimeout(surgeTimer); $("wTimerWrap").classList.remove("surging"); figSpeed=1; setPauseUI(true); setPhase("Paused"); beep("pause"); buzz(15); }
 }
 
 /* ============ DONE ============ */
@@ -1612,7 +1614,7 @@ const cvs=$("confetti"),ctx=cvs.getContext("2d");
 function sizeCanvas(){cvs.width=innerWidth;cvs.height=innerHeight;}
 sizeCanvas();addEventListener("resize",sizeCanvas);
 const CCOLORS=["#FF5E7E","#FF9D5C","#23C77E","#4A8CFF","#B65CFF","#FFB13D","#00C2D9","#FF5CB0"];
-let confettiRAF=null;
+let confettiParts=[], confettiRAF=null;
 /* seasonal / time-of-day confetti palette — subtle, fully offline */
 function confettiColors(){
   const d=new Date(), mo=d.getMonth(), day=d.getDate(), hr=d.getHours();
@@ -1621,24 +1623,30 @@ function confettiColors(){
   if(hr>=19||hr<6)     return ["#7A6BFF","#4A8CFF","#FF5CB0","#00C2D9","#B65CFF","#FFC628"];  /* evening jewel tones */
   return CCOLORS;
 }
+/* one shared particle pool + one rAF loop, so overlapping bursts (e.g. mashing the Done
+   mascot mid-celebration) can't fight over the canvas or leak a second uncancelable loop */
+function confettiFrame(){
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  for(let k=confettiParts.length-1;k>=0;k--){ const p=confettiParts[k];
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.22;p.vx*=0.99;p.rot+=p.vr;p.life--;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.col;
+    if(p.shape===0)ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.4);else{ctx.beginPath();ctx.arc(0,0,p.r/2,0,6.28);ctx.fill();}ctx.restore();
+    if(p.life<=0)confettiParts.splice(k,1);
+  }
+  if(confettiParts.length)confettiRAF=requestAnimationFrame(confettiFrame);
+  else{confettiRAF=null;ctx.clearRect(0,0,cvs.width,cvs.height);}
+}
 function burst(n,big){
   if(reduceMotion())n=Math.max(8,Math.round(n*0.3));
   const cols=confettiColors();
   const cx=cvs.width/2, cy=big?cvs.height*.35:cvs.height*.5, spread=big?cvs.width*.5:120;
-  const parts=[];
-  for(let i=0;i<n;i++)parts.push({x:cx+(Math.random()-.5)*spread,y:cy,
+  let life=big?170:70; if(reduceMotion())life=Math.round(life*0.55);
+  for(let i=0;i<n;i++)confettiParts.push({x:cx+(Math.random()-.5)*spread,y:cy,
     vx:(Math.random()-.5)*(big?14:9),vy:(Math.random()*-1-(big?7:5))*1.2,r:6+Math.random()*8,
-    col:cols[Math.floor(Math.random()*cols.length)],rot:Math.random()*6.28,vr:(Math.random()-.5)*.4,shape:Math.random()<.5?0:1});
-  let frames=big?170:70; if(reduceMotion())frames=Math.round(frames*0.55);
-  (function run(){
-    ctx.clearRect(0,0,cvs.width,cvs.height);
-    parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.22;p.vx*=0.99;p.rot+=p.vr;
-      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.col;
-      if(p.shape===0)ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.4);else{ctx.beginPath();ctx.arc(0,0,p.r/2,0,6.28);ctx.fill();}ctx.restore();});
-    if(--frames>0)confettiRAF=requestAnimationFrame(run);else{confettiRAF=null;ctx.clearRect(0,0,cvs.width,cvs.height);}
-  })();
+    col:cols[Math.floor(Math.random()*cols.length)],rot:Math.random()*6.28,vr:(Math.random()-.5)*.4,shape:Math.random()<.5?0:1,life});
+  if(!confettiRAF)confettiRAF=requestAnimationFrame(confettiFrame);
 }
-function stopConfetti(){ if(confettiRAF){cancelAnimationFrame(confettiRAF);confettiRAF=null;} ctx.clearRect(0,0,cvs.width,cvs.height); }
+function stopConfetti(){ if(confettiRAF){cancelAnimationFrame(confettiRAF);confettiRAF=null;} confettiParts=[]; ctx.clearRect(0,0,cvs.width,cvs.height); }
 function bigConfetti(){burst(180,true);} function miniConfetti(){burst(46,false);}
 
 /* ============ SETTINGS ============ */
@@ -1646,14 +1654,14 @@ function openSettings(){ $("settingsOverlay").classList.add("on"); syncSettings(
 function closeSettings(){$("settingsOverlay").classList.remove("on");}
 function syncVolUI(){ const vs=$("volSlider"), pct=Math.round(state.vol*100); vs.value=pct; vs.style.setProperty("--volfill",pct+"%"); }
 function syncSettings(){
-  $("tgSound").classList.toggle("on",state.sound);
-  $("soundSub").textContent=state.mixMusic?"Beeps & cheers":"Beeps & cheers — plays even on silent mode";
-  $("tgMix").classList.toggle("on",state.mixMusic);
+  $("tgSound").classList.toggle("on",state.sound); $("tgSound").setAttribute("aria-checked",state.sound?"true":"false");
+  $("soundSub").textContent=state.mixMusic?"Beeps & cheers":"Beeps & cheers. Plays even on silent mode";
+  $("tgMix").classList.toggle("on",state.mixMusic); $("tgMix").setAttribute("aria-checked",state.mixMusic?"true":"false");
   syncVolUI();
   $("volRow").style.opacity=state.sound?"":"0.45";
   $("mixRow").style.opacity=state.sound?"":"0.45";
-  document.querySelectorAll("#segDiff button").forEach(b=>b.classList.toggle("on",b.dataset.diff===state.diff));
-  document.querySelectorAll("#segRest button").forEach(b=>b.classList.toggle("on",b.dataset.rest===state.rest));
+  document.querySelectorAll("#segDiff button").forEach(b=>{const on=b.dataset.diff===state.diff;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on?"true":"false");});
+  document.querySelectorAll("#segRest button").forEach(b=>{const on=b.dataset.rest===state.rest;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on?"true":"false");});
   renderCatChips();
 }
 /* parent category filter: chips in Settings; turning a kind off pulls it from the spinner (but Browse stays the full catalog) */
@@ -1681,7 +1689,9 @@ function toggleCat(c){
 let confirmAction=null;
 function askConfirm(title,text,yesLabel,onYes){ $("cfTitle").textContent=title;$("cfText").textContent=text;$("cfYes").textContent=yesLabel;confirmAction=onYes;$("confirmOverlay").classList.add("on"); }
 function closeConfirm(){$("confirmOverlay").classList.remove("on");confirmAction=null;}
-function quitToHome(){ askConfirm("Leave your moves?","You're doing great — don't stop now!","Leave",()=>{ clearCd();stopFig();releaseWake();stopConfetti();document.querySelectorAll(".cheer-pop").forEach(n=>n.remove());renderHome();show("home"); }); }
+let quitPaused=false;
+function quitToHome(){ quitPaused=!!(cd&&!cd.isPaused()); if(quitPaused)cd.pause(); /* freeze the timer behind the modal so a move can't auto-complete while the parent reads it */
+  askConfirm("Leave your moves?","You're doing great, don't stop now!","Leave",()=>{ quitPaused=false; clearCd();stopFig();releaseWake();stopConfetti();document.querySelectorAll(".cheer-pop").forEach(n=>n.remove());renderHome();show("home"); }); }
 
 /* ============ EVENTS ============ */
 document.addEventListener("pointerdown",function once(){ensureAudio();document.removeEventListener("pointerdown",once);},{once:true});
@@ -1711,7 +1721,7 @@ $("doneBolt").addEventListener("pointerdown",()=>{ /* mash the mascot = confetti
   }
 });
 $("doneBolt").addEventListener("animationend",e=>{ if(e.animationName==="boltPoke")$("doneBolt").classList.remove("poke"); });
-$("btnHomeFromDone").addEventListener("click",()=>{renderHome();show("home");});
+$("btnHomeFromDone").addEventListener("click",()=>{stopConfetti();renderHome();show("home");});
 
 $("btnSettings").addEventListener("click",openSettings);
 $("settingsOverlay").addEventListener("click",e=>{if(e.target===$("settingsOverlay"))closeSettings();});
@@ -1719,6 +1729,7 @@ $("tgSound").addEventListener("click",()=>{state.sound=!state.sound;store("sound
   if(state.sound){ensureAudio();beep("ding");}else releaseAudioSession(); buzz(15);});
 $("tgMix").addEventListener("click",()=>{state.mixMusic=!state.mixMusic;store("mix",state.mixMusic);syncSettings();
   if(state.sound){ensureAudio();beep("ding");} buzz(15);}); /* ensureAudio re-claims or releases the session per the new mode */
+["tgSound","tgMix"].forEach(id=>$(id).addEventListener("keydown",e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); $(id).click(); } })); /* space/enter flips the switch for keyboard + switch users */
 $("volSlider").addEventListener("input",e=>{
   state.vol=Math.max(0,Math.min(1,(+e.target.value||0)/100));
   if(!state.sound&&state.vol>0){state.sound=true;store("sound",true);store("vol",state.vol);claimAudioSession();syncSettings();} /* dragging volume up implies wanting sound; persist both so an interrupted drag can't store sound-on with a stale vol */
@@ -1732,7 +1743,7 @@ $("btnAllMoves").addEventListener("click",()=>{beep("tick");buzz(10);openBrowse(
 $("brClose").addEventListener("click",()=>{beep("tick");renderHome();show("home");});
 $("btnReset").addEventListener("click",()=>{ closeSettings(); askConfirm("Start fresh?","This clears today's move count.","Reset",()=>{ stats={day:null,todayCount:0};store("stats",stats);renderHome(); }); });
 
-$("cfNo").addEventListener("click",closeConfirm);
+$("cfNo").addEventListener("click",()=>{ closeConfirm(); if(quitPaused&&cd)cd.resume(); quitPaused=false; }); /* resume the timer we paused when opening the quit modal */
 $("cfYes").addEventListener("click",()=>{const a=confirmAction;closeConfirm();if(a)a();});
 
 let lastTouch=0;
