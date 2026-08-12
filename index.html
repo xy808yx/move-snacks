@@ -189,6 +189,154 @@
   .flip-front .fnm{font-size:10px;font-weight:800;text-align:center;line-height:1.1;color:var(--ink);}
   .flip-card.dealin{animation:pop .4s cubic-bezier(.34,1.56,.64,1) backwards;}
 
+  /* shared prize card: the winning move that pops out of box / claw / rocket */
+  .prize{position:absolute;left:50%;top:50%;z-index:6;
+    transform:translate(-50%,-42%) scale(.55);opacity:0;
+    display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;
+    transition:transform .5s cubic-bezier(.34,1.56,.64,1),opacity .3s ease;}
+  .prize.show{transform:translate(-50%,-50%) scale(1);opacity:1;}
+  .prize-tile{width:92px;height:92px;border-radius:24px;display:grid;place-items:center;
+    box-shadow:0 14px 30px rgba(40,30,80,.20);}
+  .prize-tile canvas{width:74px;height:74px;}
+  .prize-nm{font-weight:850;font-size:18px;letter-spacing:-.3px;color:var(--ink);text-align:center;max-width:200px;line-height:1.15;}
+  .prize-cat{font-size:12px;font-weight:800;color:#fff;padding:3px 12px;border-radius:20px;}
+
+  /* ---- mystery box ---- */
+  .mbox-wrap{position:relative;width:min(76vw,300px);height:280px;}
+  .mbox-glow{position:absolute;left:50%;bottom:6px;width:220px;height:220px;transform:translateX(-50%);
+    border-radius:50%;background:radial-gradient(closest-side,rgba(255,198,40,.5),rgba(255,198,40,0) 70%);
+    opacity:.25;transition:opacity .5s ease,transform .5s ease;}
+  .mbox{position:absolute;left:50%;bottom:26px;width:132px;height:118px;margin-left:-66px;z-index:1;} /* whole box under the prize (z 6), lid included */
+  .mbox-lid{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:36px;border-radius:12px;
+    background:linear-gradient(135deg,#8A7BFF,#C46CFF);box-shadow:0 6px 16px rgba(122,107,255,.35);z-index:2;
+    transition:transform .5s cubic-bezier(.3,1.4,.5,1),opacity .45s ease;}
+  .mbox-knot{position:absolute;top:-9px;left:50%;transform:translateX(-50%);display:flex;gap:2px;}
+  .mbox-knot i{width:16px;height:14px;border-radius:50% 50% 40% 40%;background:linear-gradient(180deg,#FFF0AE,#FFC628);
+    box-shadow:0 2px 5px rgba(180,120,0,.3);}
+  .mbox-knot i:first-child{transform:rotate(-24deg);} .mbox-knot i:last-child{transform:rotate(24deg);}
+  .mbox-base{position:absolute;top:30px;left:0;width:132px;height:88px;border-radius:8px 8px 16px 16px;
+    background:linear-gradient(160deg,#7A6BFF,#A45CFF);box-shadow:0 14px 30px rgba(122,107,255,.35);overflow:hidden;
+    transition:transform .5s ease,opacity .45s ease;}
+  .mbox-ribbon{position:absolute;top:0;bottom:0;left:50%;width:20px;margin-left:-10px;
+    background:linear-gradient(180deg,#FFF0AE,#FFC628);opacity:.95;}
+  .mbox-base::after{content:"";position:absolute;top:6px;left:8px;width:34px;height:14px;border-radius:8px;
+    background:rgba(255,255,255,.28);transform:rotate(-12deg);}
+  .mbox-wrap.r1 .mbox{animation:rattleA .55s ease-in-out infinite;}
+  .mbox-wrap.r2 .mbox{animation:rattleB .4s ease-in-out infinite;}
+  .mbox-wrap.r2 .mbox-glow{opacity:.5;}
+  .mbox-wrap.r3 .mbox{animation:rattleC .28s linear infinite;}
+  .mbox-wrap.r3 .mbox-glow{opacity:.8;transform:translateX(-50%) scale(1.15);}
+  @keyframes rattleA{0%,100%{transform:rotate(0);}25%{transform:rotate(-2.5deg) translateX(-2px);}75%{transform:rotate(2.5deg) translateX(2px);}}
+  @keyframes rattleB{0%,100%{transform:rotate(0);}20%{transform:rotate(-4deg) translate(-3px,-1px);}65%{transform:rotate(4deg) translate(3px,-2px);}}
+  @keyframes rattleC{0%,100%{transform:rotate(0);}15%{transform:rotate(-6deg) translate(-4px,-3px);}40%{transform:rotate(5deg) translate(4px,-1px);}65%{transform:rotate(-5deg) translate(-3px,-4px);}85%{transform:rotate(6deg) translate(4px,-2px);}}
+  .mbox-wrap.open .mbox{animation:none;}
+  .mbox-wrap.open .mbox-lid{transform:translate(-50%,-118px) rotate(-26deg);opacity:0;}
+  .mbox-wrap.open .mbox-base{transform:translateY(16px) scale(.92);opacity:.55;}
+  .mbox-wrap.open .mbox-glow{opacity:.9;transform:translateX(-50%) scale(1.5);}
+  .mbox-wrap .prize{top:42%;}
+
+  /* ---- claw machine ---- */
+  .claw-cab{width:min(80vw,320px);background:var(--card);border-radius:28px;padding:14px;
+    box-shadow:var(--shadow-lg);border:3px solid #fff;}
+  .claw-glass{position:relative;height:250px;border-radius:18px;overflow:hidden;
+    background:linear-gradient(180deg,#EFF3FF 0%,#F6F5FB 70%,#EFECF8 100%);}
+  .claw-rail{position:absolute;top:10px;left:10px;right:10px;height:6px;border-radius:3px;background:#E2DEEF;}
+  .claw-rig{position:absolute;top:12px;left:0;width:44px;margin-left:-22px;z-index:4;
+    transition:transform 1.15s cubic-bezier(.45,.05,.35,1);}
+  .claw-trolley{position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:26px;height:12px;border-radius:6px;
+    background:linear-gradient(180deg,#B9B2D6,#9A92C2);}
+  .claw-cable{position:absolute;top:8px;left:50%;width:3px;margin-left:-1.5px;height:16px;background:#C9C4DC;
+    transition:height .55s cubic-bezier(.5,0,.6,1);}
+  .claw-head{position:absolute;top:0;left:50%;transform:translate(-50%,16px);z-index:2; /* prongs stay in front of a held capsule */
+    transition:transform .55s cubic-bezier(.5,0,.6,1);}
+  .claw-dome{width:22px;height:14px;margin:0 auto;border-radius:11px 11px 4px 4px;
+    background:linear-gradient(180deg,#CFC9E6,#A79ECB);}
+  .claw-p{position:absolute;top:10px;width:15px;height:24px;border:4px solid #9A92C2;border-top:none;transition:transform .22s ease;}
+  .claw-p.l{left:-12px;border-right:none;border-radius:0 0 0 16px;transform-origin:top right;transform:rotate(-18deg);}
+  .claw-p.r{right:-12px;border-left:none;border-radius:0 0 16px 0;transform-origin:top left;transform:rotate(18deg);}
+  .claw-rig.grab .claw-p.l{transform:rotate(6deg);}
+  .claw-rig.grab .claw-p.r{transform:rotate(-6deg);}
+  .claw-cap{position:absolute;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+    box-shadow:0 6px 14px rgba(40,30,80,.16), inset 0 -3px 0 rgba(40,30,80,.08);}
+  .claw-cap::after{content:"";position:absolute;top:7px;left:9px;width:12px;height:8px;border-radius:50%;
+    background:rgba(255,255,255,.55);transform:rotate(-18deg);}
+  .claw-cap canvas{width:30px;height:30px;margin-top:10px;} /* fig sits in the white lower half, drawn in the capsule colour */
+  .claw-cap.dealin{animation:pop .4s cubic-bezier(.34,1.56,.64,1) backwards;}
+  .claw-cap.held{transition:transform .55s cubic-bezier(.5,0,.6,1),top .55s cubic-bezier(.5,0,.6,1);}
+  .claw-cap.crack{animation:capCrack .4s ease-out forwards;}
+  @keyframes capCrack{0%{transform:scale(1);opacity:1;}55%{transform:scale(1.35);opacity:.9;}100%{transform:scale(1.7);opacity:0;}}
+  .claw-flash{position:absolute;z-index:5;width:70px;height:70px;border-radius:50%;pointer-events:none;opacity:0;
+    background:radial-gradient(closest-side,rgba(255,240,174,.95),rgba(255,198,40,0) 72%);}
+  .claw-flash.on{animation:clawFlash .5s ease-out forwards;}
+  @keyframes clawFlash{0%{opacity:0;transform:scale(.4);}35%{opacity:1;}100%{opacity:0;transform:scale(2.1);}}
+
+  /* ---- rocket blast ---- */
+  .rkt-wrap{width:min(80vw,320px);background:var(--card);border-radius:28px;padding:14px;
+    box-shadow:var(--shadow-lg);border:3px solid #fff;}
+  .rkt-sky{position:relative;height:260px;border-radius:18px;overflow:hidden;
+    background:linear-gradient(180deg,#E8F1FF 0%,#F3EFFF 55%,#FFF3E6 100%);}
+  .rkt-star{position:absolute;width:8px;height:8px;
+    clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);
+    background:#FFC628;animation:tw 2.6s ease-in-out infinite;}
+  .rkt-pad{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);width:110px;height:12px;
+    border-radius:7px;background:linear-gradient(180deg,#DDD8EC,#C9C4DC);}
+  .rkt-pad::before,.rkt-pad::after{content:"";position:absolute;top:10px;width:7px;height:12px;border-radius:0 0 3px 3px;background:#C9C4DC;}
+  .rkt-pad::before{left:14px;} .rkt-pad::after{right:14px;}
+  .rkt{position:absolute;bottom:26px;left:50%;width:54px;height:104px;margin-left:-27px;z-index:3;
+    transition:transform 1.05s cubic-bezier(.6,-.02,.85,.4);}
+  .rkt-body{position:absolute;inset:0 8px;border-radius:50% 50% 42% 42%/38% 38% 12% 12%;
+    background:linear-gradient(135deg,#FF5E7E,#FF9D5C);box-shadow:inset -5px 0 8px rgba(160,30,60,.18);}
+  .rkt-win{position:absolute;top:34px;left:50%;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;
+    background:#fff;box-shadow:inset 0 0 0 3.5px #7A6BFF;display:grid;place-items:center;}
+  .rkt-win svg{width:13px;height:13px;color:#FFC628;}
+  .rkt-fin{position:absolute;bottom:2px;width:16px;height:30px;background:#7A6BFF;z-index:-1;}
+  .rkt-fin.l{left:-6px;border-radius:14px 0 4px 10px;transform:skewY(18deg);}
+  .rkt-fin.r{right:-6px;border-radius:0 14px 10px 4px;transform:skewY(-18deg);}
+  .rkt-flame{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);width:24px;height:30px;
+    border-radius:50% 50% 50% 50%/28% 28% 72% 72%;opacity:0;
+    background:radial-gradient(50% 36% at 50% 22%,#FFF0AE 0%,#FFC628 48%,#FF7A45 82%,rgba(255,122,69,0) 100%);}
+  .rkt.lit .rkt-flame{opacity:1;animation:flick .14s ease-in-out infinite;}
+  @keyframes flick{0%,100%{transform:translateX(-50%) scaleY(1);}50%{transform:translateX(-50%) scaleY(1.3) scaleX(.85);}}
+  .rkt.rmb1{animation:rumble .3s linear infinite;}
+  .rkt.rmb2{animation:rumble .18s linear infinite;}
+  .rkt.rmb3{animation:rumble .1s linear infinite;}
+  @keyframes rumble{0%,100%{margin-left:-27px;}25%{margin-left:-28.5px;}75%{margin-left:-25.5px;}}
+  .rkt.away{transform:translateY(-360px);}
+  .rkt-count{position:absolute;inset:0;display:grid;place-items:center;z-index:4;pointer-events:none;}
+  .rkt-count .n{font-size:88px;font-weight:850;letter-spacing:-2px;
+    background:linear-gradient(135deg,#FF5E7E 18%,#FF9D5C 82%);
+    -webkit-background-clip:text;background-clip:text;color:#FF5E7E;-webkit-text-fill-color:transparent;
+    animation:countPop .72s cubic-bezier(.2,.9,.3,1) forwards;}
+  .rkt-count .n.go{font-size:64px;letter-spacing:-1px;}
+  @keyframes countPop{0%{opacity:0;transform:scale(1.7);}25%{opacity:1;transform:scale(1);}80%{opacity:1;}100%{opacity:0;transform:scale(.9);}}
+  .rkt-puff{position:absolute;bottom:20px;border-radius:50%;background:#fff;opacity:0;z-index:2;}
+  .rkt-puff.on{animation:puff .9s ease-out forwards;}
+  @keyframes puff{0%{opacity:.9;transform:scale(.4);}100%{opacity:0;transform:scale(1.9) translateY(10px);}}
+
+  /* ---- dice roll ---- */
+  .dice-wrap{position:relative;width:min(76vw,300px);height:260px;display:grid;place-items:center;perspective:760px;}
+  .dice-shadow{position:absolute;left:50%;bottom:22px;width:130px;height:20px;transform:translateX(-50%);
+    border-radius:50%;background:radial-gradient(50% 50% at 50% 50%,rgba(40,30,80,.18),rgba(40,30,80,0) 72%);}
+  .dice-hop{--dsz:132px;width:var(--dsz);height:var(--dsz);}
+  .dice-hop.roll{animation:diceHop 2.5s cubic-bezier(.3,.6,.4,1) forwards;}
+  @keyframes diceHop{0%{transform:translate(-70px,-130px);}20%{transform:translate(-42px,0);}38%{transform:translate(-18px,-58px);}
+    56%{transform:translate(4px,0);}72%{transform:translate(14px,-24px);}86%{transform:translate(18px,0);}100%{transform:translate(0,0);}}
+  .dice-cube{position:relative;width:100%;height:100%;transform-style:preserve-3d;will-change:transform;
+    transition:transform 2.5s cubic-bezier(.22,.72,.24,1);}
+  .dice-face{position:absolute;inset:0;border-radius:24px;background:#fff;
+    box-shadow:inset 0 0 0 3px #ECECF4;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:20px;}
+  .dice-face .pip{width:22px;height:22px;border-radius:50%;place-self:center;box-shadow:inset 0 -2px 0 rgba(40,30,80,.14);}
+  .dice-face.dprize{padding:0;overflow:hidden;display:grid;place-items:center;box-shadow:none;
+    grid-template-columns:1fr;grid-template-rows:1fr;} /* undo the 3x3 pip grid so the tile fills the face */
+  .dice-face.dprize .dtile{width:100%;height:100%;border-radius:24px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:4px;}
+  .dice-face.dprize canvas{width:74px;height:74px;}
+  .dice-face.dprize .dnm{font-weight:850;font-size:14px;color:#fff;text-shadow:0 1.5px 3px rgba(40,30,80,.3);
+    text-align:center;line-height:1.1;padding:0 8px;}
+  .dice-hop.landed{animation:diceLand .5s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes diceLand{0%{transform:scale(1);}35%{transform:scale(1.1,.88);}70%{transform:scale(.97,1.05);}100%{transform:scale(1);}}
+
   /* ---------- PACK ---------- */
   .pack-head{text-align:center;margin-bottom:6px;}
   .pack-head h2{font-size:25px;font-weight:850;letter-spacing:-.4px;margin:6px 0 4px;}
@@ -458,6 +606,22 @@
     .plinko{width:min(58vw,300px);padding:10px;}
     .flip-row{max-width:min(66vw,440px);gap:8px;}
     .flip-card{width:62px;height:78px;}
+    .prize-tile{width:76px;height:76px;border-radius:20px;}
+    .prize-tile canvas{width:62px;height:62px;}
+    .prize-nm{font-size:15px;}
+    .mbox-wrap{height:min(52vh,240px);}
+    .mbox{bottom:14px;}
+    .mbox-wrap .prize{top:38%;}
+    .claw-cab,.rkt-wrap{width:min(58vw,300px);padding:10px;}
+    .claw-glass{height:min(52vh,210px);}
+    .rkt-sky{height:min(52vh,210px);}
+    .rkt.away{transform:translateY(-300px);}
+    .dice-wrap{height:min(56vh,230px);}
+    .dice-hop{--dsz:104px;}
+    .dice-face{padding:15px;border-radius:20px;}
+    .dice-face .pip{width:17px;height:17px;}
+    .dice-face.dprize canvas{width:58px;height:58px;}
+    .dice-face.dprize .dnm{font-size:12px;}
 
     /* pack: title + buttons left, list scrolls right */
     #pack{display:grid;column-gap:clamp(14px,3vw,30px);
@@ -544,6 +708,10 @@
     .recap-card{animation:none!important;}
     .flip-card.dealin{animation:none;}
     .flip-inner,.wheel{transition:none!important;}
+    .mbox,.mbox-glow,.rkt,.rkt-flame,.rkt-star,.rkt-puff,.rkt-count .n,
+    .dice-hop,.claw-cap.dealin,.claw-cap.crack,.claw-flash.on{animation:none!important;}
+    .mbox-lid,.mbox-base,.mbox-glow,.prize,.claw-rig,.claw-cable,.claw-head,.claw-cap,
+    .claw-p,.dice-cube,.rkt{transition:none!important;}
   }
 </style>
 </head>
@@ -581,7 +749,7 @@
     <button class="btn btn-primary" id="btnGo"><svg class="ic" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M20.98 8.17Q22.28 5.94 24.86 5.94L33.46 5.94Q36.04 5.94 34.75 8.17L27.66 20.42Q26.58 22.28 28.73 22.28L35.61 22.28Q37.76 22.28 36.15 23.7L17.01 40.64Q15.4 42.06 16.08 40.02L19.88 28.62Q20.56 26.58 18.41 26.58L12.39 26.58Q10.24 26.58 11.32 24.72Z"/></svg>Make a Move!</button>
   </section>
 
-  <!-- ============ SPIN (reveal stage: slot reel / wheel / plinko / flip) ============ -->
+  <!-- ============ SPIN (reveal stage: reel / wheel / plinko / flip / box / claw / rocket / dice) ============ -->
   <section id="spin" class="screen">
     <div class="spin-title grad-text" id="spinTitle">Mixing your moves…</div>
     <div class="spin-sub" id="spinSub">What will you get?</div>
@@ -1297,7 +1465,9 @@ function applyFavs(pack,n){
    state instantly. makePack() and show("spin") are done once by startSpin(). */
 let spinSkip=null, spinning=false;
 const REVEAL_TEXT={ reel:["Mixing your moves…","What will you get?"], wheel:["Spin the wheel!","Where will it land?"],
-  plinko:["Drop the ball!","Watch it bounce!"], flip:["Flip your cards!","What's underneath?"] };
+  plinko:["Drop the ball!","Watch it bounce!"], flip:["Flip your cards!","What's underneath?"],
+  box:["Shake the box!","What's hiding inside?"], claw:["Grab a prize!","Which one will it catch?"],
+  rocket:["Ready to launch!","Counting down…"], dice:["Roll the dice!","Which side will it land on?"] };
 function setSpinText(k){ const t=REVEAL_TEXT[k]||REVEAL_TEXT.reel; $("spinTitle").textContent=t[0]; $("spinSub").textContent=t[1]; }
 /* the shared landing beat: payoff sound + confetti, then on to the pack screen */
 function landReveal(rm){ beep("jackpot"); buzz([50,40,80]);
@@ -1438,7 +1608,174 @@ function doFlip(){
   spinSkip=()=>{ cards.forEach(c=>c.classList.add("flipped")); setTimeout(fin,250); };
 }
 
-const REVEALS=[doSpin,doWheel,doPlinko,doFlip];
+/* the winning move card that pops out of the box / claw / rocket machines */
+function prizeCard(ex){ const col=colOf(ex.c);
+  const pz=document.createElement("div"); pz.className="prize";
+  const tile=document.createElement("div"); tile.className="prize-tile"; tile.style.background=gradOf(col);
+  const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; tile.appendChild(cv);
+  const nm=document.createElement("div"); nm.className="prize-nm"; nm.textContent=ex.n;
+  const cat=document.createElement("div"); cat.className="prize-cat"; cat.textContent=CATS[ex.c].label; cat.style.background=gradOf(col);
+  pz.appendChild(tile); pz.appendChild(nm); pz.appendChild(cat);
+  figFill(cv,ex.p,"#FFFFFF"); return pz; }
+
+/* ---- mystery box: rattles harder and harder, then bursts open ---- */
+function doBox(){
+  const rm=reduceMotion(); setSpinText("box");
+  const stage=$("spinStage"), target=state.pack[0];
+  const wrap=document.createElement("div"); wrap.className="mbox-wrap";
+  wrap.innerHTML='<div class="mbox-glow"></div>'+
+    '<div class="mbox"><div class="mbox-base"><span class="mbox-ribbon"></span></div>'+
+    '<div class="mbox-lid"><span class="mbox-knot"><i></i><i></i></span></div></div>';
+  const pz=prizeCard(target); wrap.appendChild(pz); stage.appendChild(wrap);
+  const ticks=[], later=(fn,ms)=>ticks.push(setTimeout(fn,ms));
+  const OPEN=2650;
+  const openUp=()=>{ wrap.classList.remove("r1","r2","r3"); wrap.classList.add("open"); pz.classList.add("show"); };
+  const fin=spinFinisher(()=>{ ticks.forEach(clearTimeout); openUp(); landReveal(rm); }, rm?700:OPEN+1450);
+  if(rm){ openUp(); fin(); return; }
+  buzz(20);
+  later(()=>wrap.classList.add("r1"),140);
+  later(()=>{ wrap.classList.remove("r1"); wrap.classList.add("r2"); },1050);
+  later(()=>{ wrap.classList.remove("r2"); wrap.classList.add("r3"); buzz(25); },1850);
+  for(let t=0;t<16;t++) later(()=>beep("reel",380+t*36), 220+Math.pow(t/16,1.5)*2200);
+  later(()=>{ openUp(); beep("switch"); buzz([40,30,60]); },OPEN);
+  later(fin,OPEN+620);
+  spinSkip=()=>{ ticks.forEach(clearTimeout); openUp(); setTimeout(fin,420); };
+}
+
+/* ---- claw machine: the claw rides over, drops, grabs a capsule, cracks it open ---- */
+function doClaw(){
+  const rm=reduceMotion(); setSpinText("claw");
+  const stage=$("spinStage"), target=state.pack[0];
+  const cab=document.createElement("div"); cab.className="claw-cab";
+  const glass=document.createElement("div"); glass.className="claw-glass";
+  glass.innerHTML='<div class="claw-rail"></div>'+
+    '<div class="claw-rig"><div class="claw-trolley"></div><div class="claw-cable"></div>'+
+    '<div class="claw-head"><div class="claw-dome"></div><span class="claw-p l"></span><span class="claw-p r"></span></div></div>';
+  cab.appendChild(glass); stage.appendChild(cab);
+  const rig=glass.querySelector(".claw-rig"), cable=glass.querySelector(".claw-cable"), head=glass.querySelector(".claw-head");
+  const gw=glass.clientWidth||286, gh=glass.clientHeight||250;
+  const N=5, ti=Math.floor(Math.random()*N), keys=Object.keys(CATS), caps=[], pool=activeEX();
+  for(let i=0;i<N;i++){
+    const isT=i===ti, ex=isT?target:pick(pool), col=isT?colOf(target.c):colOf(keys[Math.floor(Math.random()*keys.length)]);
+    const cap=document.createElement("div"); cap.className="claw-cap"+(rm?"":" dealin");
+    cap.style.background="linear-gradient(180deg,"+col[0]+" 0 52%,#FFFFFF 52%)";
+    cap.style.left=(gw*(i+0.5)/N-23)+"px"; cap.style.bottom=(6+(i%2)*8)+"px";
+    cap.style.transform="rotate("+((i-2)*7)+"deg)"; cap.style.animationDelay=(i*0.07)+"s";
+    const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; cap.appendChild(cv);
+    glass.appendChild(cap); figFill(cv,ex.p,col[0]); caps.push(cap);
+  }
+  const tx=gw*(ti+0.5)/N, capB=6+(ti%2)*8, headY=(gh-capB-46)-22;
+  const pz=prizeCard(target); glass.appendChild(pz);
+  head.style.transform="translate(-50%,16px)";
+  rig.style.transform="translateX(24px)";
+  const ticks=[], later=(fn,ms)=>ticks.push(setTimeout(fn,ms));
+  const capT=caps[ti];
+  const crack=()=>{ const fl=document.createElement("span"); fl.className="claw-flash on";
+    fl.style.left=Math.max(6,Math.min(gw-76,tx-35))+"px"; fl.style.top="24px"; glass.appendChild(fl);
+    capT.classList.add("crack"); beep("sparkle"); pz.classList.add("show"); };
+  const finalState=()=>{ rig.style.transition="none"; rig.style.transform="translateX("+tx+"px)"; rig.classList.add("grab");
+    capT.style.display="none"; pz.classList.add("show"); };
+  const fin=spinFinisher(()=>{ ticks.forEach(clearTimeout); finalState(); landReveal(rm); }, rm?700:4400);
+  if(rm){ finalState(); fin(); return; }
+  buzz(20);
+  later(()=>{ rig.style.transform="translateX("+tx+"px)"; },500);
+  for(let t=0;t<8;t++) later(()=>beep("reel",430+t*40), 520+t*140);
+  later(()=>{ cable.style.height=(headY-6)+"px"; head.style.transform="translate(-50%,"+headY+"px)"; beep("reel",320); },1750);
+  later(()=>{ rig.classList.add("grab"); beep("switch"); buzz(30);
+    /* the claw takes the capsule: it rides up with the cable from here on */
+    capT.style.left="50%"; capT.style.marginLeft="-23px"; capT.style.bottom="auto"; capT.style.top=(headY+10)+"px";
+    rig.appendChild(capT); },2380);
+  later(()=>{ void capT.offsetWidth; capT.classList.add("held");
+    cable.style.height="16px"; head.style.transform="translate(-50%,16px)"; capT.style.top="28px";
+    beep("reel",520); },2560);
+  later(crack,3260);
+  later(fin,3800);
+  spinSkip=()=>{ ticks.forEach(clearTimeout); finalState(); setTimeout(fin,320); };
+}
+
+/* ---- rocket blast: 3 2 1 countdown, blast off, the move lands at the pad ---- */
+function doRocket(){
+  const rm=reduceMotion(); setSpinText("rocket");
+  const stage=$("spinStage"), target=state.pack[0];
+  const wrap=document.createElement("div"); wrap.className="rkt-wrap";
+  const sky=document.createElement("div"); sky.className="rkt-sky";
+  sky.innerHTML='<span class="rkt-star" style="left:12%;top:14%"></span>'+
+    '<span class="rkt-star" style="left:84%;top:10%;animation-delay:.8s"></span>'+
+    '<span class="rkt-star" style="left:70%;top:32%;width:6px;height:6px;animation-delay:1.5s"></span>'+
+    '<span class="rkt-star" style="left:22%;top:42%;width:6px;height:6px;animation-delay:.4s"></span>'+
+    '<div class="rkt-pad"></div>'+
+    '<div class="rkt"><span class="rkt-fin l"></span><span class="rkt-fin r"></span>'+
+    '<div class="rkt-body"></div><div class="rkt-win">'+BOLT_MINI+'</div><div class="rkt-flame"></div></div>'+
+    '<div class="rkt-count"></div>';
+  const pz=prizeCard(target); sky.appendChild(pz); wrap.appendChild(sky); stage.appendChild(wrap);
+  const rkt=sky.querySelector(".rkt"), cnt=sky.querySelector(".rkt-count");
+  const ticks=[], later=(fn,ms)=>ticks.push(setTimeout(fn,ms));
+  const num=(txt,go)=>{ cnt.innerHTML=""; const n=document.createElement("span"); n.className="n"+(go?" go":""); n.textContent=txt; cnt.appendChild(n); };
+  const finalState=()=>{ rkt.className="rkt away"; cnt.innerHTML=""; pz.classList.add("show"); };
+  const fin=spinFinisher(()=>{ ticks.forEach(clearTimeout); finalState(); landReveal(rm); }, rm?700:4400);
+  if(rm){ finalState(); fin(); return; }
+  buzz(20);
+  later(()=>{ num("3"); beep("tickfinal",3); rkt.classList.add("rmb1"); },260);
+  later(()=>{ num("2"); beep("tickfinal",2); rkt.classList.remove("rmb1"); rkt.classList.add("rmb2"); },1010);
+  later(()=>{ num("1"); beep("tickfinal",1); rkt.classList.remove("rmb2"); rkt.classList.add("rmb3"); },1760);
+  later(()=>{ num("GO!",true); beep("surge"); buzz([30,30,70]);
+    rkt.classList.remove("rmb3"); rkt.classList.add("lit");
+    for(let p=0;p<5;p++){ const pf=document.createElement("span"); pf.className="rkt-puff on";
+      const sz=16+Math.random()*18; pf.style.width=pf.style.height=sz+"px";
+      pf.style.left=(50+(Math.random()*36-18))+"%"; pf.style.animationDelay=(Math.random()*0.2)+"s";
+      sky.appendChild(pf); }
+    requestAnimationFrame(()=>rkt.classList.add("away"));
+  },2510);
+  later(()=>{ pz.classList.add("show"); beep("sparkle"); },3260);
+  later(fin,3900);
+  spinSkip=()=>{ ticks.forEach(clearTimeout); finalState(); setTimeout(fin,320); };
+}
+
+/* ---- dice roll: a 3D die tumbles in and lands on your move ---- */
+function doDice(){
+  const rm=reduceMotion(); setSpinText("dice");
+  const stage=$("spinStage"), target=state.pack[0], col=colOf(target.c);
+  const wrap=document.createElement("div"); wrap.className="dice-wrap";
+  wrap.innerHTML='<div class="dice-shadow"></div>';
+  const hop=document.createElement("div"); hop.className="dice-hop";
+  const cube=document.createElement("div"); cube.className="dice-cube";
+  /* five pip faces, each in a different category colour, plus the prize face in front */
+  const PIPS={2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+  const SIDES=[["rotateY(180deg)",2],["rotateY(90deg)",3],["rotateY(-90deg)",4],["rotateX(90deg)",5],["rotateX(-90deg)",6]];
+  const palette=Object.keys(CATS).filter(c=>c!==target.c);
+  SIDES.forEach(([tr,n],fi)=>{ const f=document.createElement("div"); f.className="dice-face";
+    f.style.transform=tr+" translateZ(calc(var(--dsz)/2))";
+    const pc=colOf(palette[fi%palette.length])[0];
+    for(let cell=0;cell<9;cell++){ const s=document.createElement("span");
+      if(PIPS[n].includes(cell)){ s.className="pip"; s.style.background=pc; }
+      f.appendChild(s); }
+    cube.appendChild(f); });
+  const pf=document.createElement("div"); pf.className="dice-face dprize";
+  pf.style.transform="translateZ(calc(var(--dsz)/2))";
+  const dt=document.createElement("div"); dt.className="dtile"; dt.style.background=gradOf(col);
+  const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; dt.appendChild(cv);
+  const dn=document.createElement("div"); dn.className="dnm"; dn.textContent=target.n;
+  dt.appendChild(dn); pf.appendChild(dt); cube.appendChild(pf);
+  figFill(cv,target.p,"#FFFFFF");
+  hop.appendChild(cube); wrap.appendChild(hop); stage.appendChild(wrap);
+  const END="rotateX(-720deg) rotateY(-1080deg)"; /* multiples of 360 so the front (prize) face wins */
+  const ticks=[];
+  const fin=spinFinisher(()=>{ ticks.forEach(clearTimeout);
+    hop.classList.remove("roll"); hop.classList.add("landed");
+    cube.style.transition="none"; cube.style.transform=END;
+    landReveal(rm); }, rm?700:3900);
+  cube.addEventListener("transitionend",fin,{once:true});
+  if(rm){ cube.style.transition="none"; cube.style.transform=END; fin(); return; }
+  buzz(20);
+  hop.classList.add("roll");
+  cube.style.transition="none"; cube.style.transform="rotateX(-46deg) rotateY(126deg)";
+  for(let t=0;t<18;t++) ticks.push(setTimeout(()=>beep("reel",430+t*30), Math.pow(t/18,1.9)*2300));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    cube.style.transition="transform 2.5s cubic-bezier(.22,.72,.24,1)"; cube.style.transform=END; }));
+  spinSkip=()=>{ ticks.forEach(clearTimeout); cube.style.transition="transform .35s cubic-bezier(.22,1,.36,1)"; cube.style.transform=END; setTimeout(fin,360); };
+}
+
+const REVEALS=[doSpin,doWheel,doPlinko,doFlip,doBox,doClaw,doRocket,doDice];
 
 /* ============ PACK SCREEN ============ */
 function showPack(){
