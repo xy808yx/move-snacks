@@ -356,6 +356,17 @@
     font-weight:850;font-size:13px;display:grid;place-items:center;flex:none;}
   .pack-btns{display:flex;gap:10px;padding-top:6px;}
   .pack-btns .btn-primary{flex:2;} .pack-btns .btn-ghost{flex:1;}
+  /* golden wildcard dressing: warm gold card with a slow shine sweep, plus the WILD name tag */
+  .pcard.gold{position:relative;overflow:hidden;background:linear-gradient(135deg,#FFFBEE,#FFF4D6);
+    box-shadow:0 6px 20px rgba(255,177,0,.28),inset 0 0 0 2px #FFD23E;}
+  .pcard.gold::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.7) 46%,transparent 60%) no-repeat;
+    background-size:240% 100%;animation:wildShine 2.4s ease-in-out infinite;}
+  @keyframes wildShine{0%{background-position:120% 0;}60%,100%{background-position:-130% 0;}}
+  .wildtag{display:inline-block;vertical-align:.14em;margin-right:6px;padding:2px 8px;border-radius:10px;
+    font-size:10.5px;font-weight:850;letter-spacing:.06em;color:#fff;
+    background:linear-gradient(135deg,#FFB100,#FF8A3D);}
+  .prize.gold .prize-tile{box-shadow:0 12px 32px rgba(255,177,0,.5),0 0 0 4px rgba(255,210,62,.42),0 0 42px rgba(255,210,62,.38);}
   @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.96);}to{opacity:1;transform:none;}}
 
   /* ---------- PLAYER (ready + work) ---------- */
@@ -712,6 +723,7 @@
     .dice-hop,.claw-cap.dealin,.claw-cap.crack,.claw-flash.on{animation:none!important;}
     .mbox-lid,.mbox-base,.mbox-glow,.prize,.claw-rig,.claw-cable,.claw-head,.claw-cap,
     .claw-p,.dice-cube,.rkt{transition:none!important;}
+    .pcard.gold::after{animation:none;display:none;} /* static gold card, no shine sweep */
   }
 </style>
 </head>
@@ -816,7 +828,7 @@
           <canvas id="wFig" class="fig timer-fig" width="32" height="32"></canvas>
         </div>
         <div class="count-readout" id="wNum">20</div>
-        <div class="work-name" id="wName">Star Jumps</div>
+        <div class="work-name" id="wName">Jumping Jacks</div>
         <div class="work-instr" id="wInstr">Jump up big and wide like a star!</div>
       </div>
       <div class="player-btns">
@@ -940,11 +952,10 @@ const gradOf = col => "linear-gradient(135deg,"+col[0]+","+col[1]+")";
 /* ---------- exercises ----------
    p = pixel-art pose id (see POSES), s = work seconds, q = intensity (1 calm·2 moderate·3 vigorous) */
 const EX = [
-  {n:"Star Jumps",p:"jack",c:"jump",q:3,s:30,i:"Jump up big and wide like a star, keep going!",surge:true},
   {n:"Tuck Jumps",p:"tuck",c:"jump",q:3,s:25,t:1.1,i:"Jump and pull your knees up high, about 10 jumps!"},
-  {n:"Broad Jumps",p:"broad",c:"jump",q:3,s:35,t:0.9,i:"Leap forward as far as you can, turn around, go back!"},
+  {n:"Broad Jumps",p:"broad",c:"jump",q:3,s:30,t:0.9,i:"Leap forward as far as you can, turn around, go back!"},
   {n:"Pogo Hops",p:"pogo",c:"jump",q:2,s:40,t:1.1,i:"Bounce on your tippy toes, light and springy!",surge:true},
-  {n:"Skater Hops",p:"skater",c:"jump",q:3,s:30,i:"Leap side to side and stick each landing!"},
+  {n:"Skater Hops",p:"skater",c:"jump",q:3,s:30,i:"Leap side to side and FREEZE each landing for a beat!"},
   {n:"Squat Jumps",p:"squatjump",c:"jump",q:3,s:25,t:1.15,i:"Squat low, then jump up tall, about 8 times!"},
   {n:"Line Hops",p:"linehop",c:"jump",q:2,s:35,t:1.15,i:"Hop side to side over a pretend line, fast feet!",surge:true},
   {n:"Bear Crawl",p:"bear",c:"animal",q:2,s:45,i:"Crawl on hands and feet across the room and back!"},
@@ -958,9 +969,9 @@ const EX = [
   {n:"Cheetah Run",p:"cheetah",c:"animal",q:3,s:25,t:1.25,i:"Run in place as fast as a cheetah!",surge:true},
   {n:"Stair Climbs",p:"climb",c:"stairs",q:2,s:45,t:0.85,i:"Walk up and down the stairs, steady and safe!"},
   {n:"Toe Taps",p:"toetap",c:"stairs",q:3,s:30,i:"Tap your toes on the bottom step, fast as you can!"},
-  {n:"Two-Step Hops",p:"climb",c:"stairs",q:3,s:35,i:"Hop up two steps, walk down, hold the rail!"},
+  {n:"Two-Step Hops",p:"climb",c:"stairs",q:3,s:30,i:"Hop up two steps, walk down, hold the rail!"},
   {n:"Bear Stairs",p:"bear",c:"stairs",q:2,s:40,i:"Crawl up the stairs like a bear, then walk down!"},
-  {n:"Stair Sprints",p:"run",c:"stairs",q:3,s:35,t:1.15,i:"Run up, walk down, and repeat!"},
+  {n:"Stair Sprints",p:"run",c:"stairs",q:3,s:30,t:1.15,i:"Run up, walk down, and repeat!"},
   {n:"Squats",p:"squat",c:"strength",q:2,s:40,i:"Sit back like a chair and stand, about 12 squats!"},
   {n:"Wall Sit",p:"wallsit",c:"strength",q:2,s:25,i:"Hold your invisible chair against the wall!"},
   {n:"Knee Push-Ups",p:"pushup",c:"strength",q:2,s:30,i:"Push up and down from your knees, about 8!"},
@@ -971,29 +982,42 @@ const EX = [
   {n:"High Knees",p:"run",c:"cardio",q:3,s:30,t:0.95,i:"Run on the spot, lifting your knees up high!",surge:true},
   {n:"Jumping Jacks",p:"jack",c:"cardio",q:3,s:30,i:"Arms and legs jump out and in, find a rhythm!",surge:true},
   {n:"Mountain Climbers",p:"climber",c:"cardio",q:3,s:30,i:"Hands on the floor, run your knees in fast!",surge:true},
-  {n:"Fast Feet",p:"run",c:"cardio",q:3,s:25,t:1.3,i:"Tiny super-fast steps, stay light on your toes!",surge:true},
   {n:"Shadow Boxing",p:"box",c:"cardio",q:2,s:45,i:"Punch the air, left, right, left, right!",surge:true},
-  {n:"Speed Skaters",p:"skater",c:"cardio",q:3,s:30,i:"Big slides side to side, swing your arms!"},
-  {n:"Flamingo Stand",p:"flamingo",c:"balance",q:1,s:30,i:"Stand on one leg… switch halfway. Stay still!"},
+  {n:"Speed Skaters",p:"skater",c:"cardio",q:3,s:30,i:"Glide side to side without stopping, swing your arms big!"},
+  {n:"Flamingo Stand",p:"flamingo",c:"balance",q:1,s:30,i:"One leg up, arms out low like wings… switch halfway. Stay still!"},
   {n:"Line Walk",p:"linewalk",c:"balance",q:1,s:35,i:"Walk heel-to-toe along a line, slow and steady!"},
   {n:"Spin & Freeze",p:"spin",c:"balance",q:2,s:35,i:"Spin around slow, then FREEZE super still!"},
-  {n:"Tree Pose",p:"tree",c:"balance",q:1,s:30,i:"Stand tall and still like a strong tree, switch legs!"},
+  {n:"Tree Pose",p:"tree",c:"balance",q:1,s:30,i:"One leg up and both arms HIGH like branches… switch halfway!"},
   {n:"Sit-Ups",p:"situp",c:"core",q:2,s:35,i:"Lie down, then sit all the way up, about 10!"},
   {n:"Bicycle Legs",p:"bicycle",c:"core",q:2,s:40,i:"On your back, pedal a bike, keep pedaling!"},
   {n:"Dead Bug",p:"deadbug",c:"core",q:1,s:40,i:"On your back, float one arm back, the other leg out!"},
   {n:"Boat Hold",p:"boat",c:"core",q:2,s:20,i:"Sit tall, lift your feet, balance like a boat, hold!"},
-  {n:"Freeze Dance",p:"dance",c:"dance",q:2,s:60,t:1.1,i:"Dance wild… then FREEZE! Then dance again!",surge:true},
-  {n:"Dance Party",p:"dance",c:"dance",q:2,s:60,i:"Show off your very best dance moves!",surge:true},
+  {n:"Freeze Dance",p:"dance",c:"dance",q:2,s:50,t:1.1,i:"Dance wild… then FREEZE! Then dance again!",surge:true},
+  {n:"Dance Party",p:"dance",c:"dance",q:2,s:50,i:"Show off your very best dance moves!",surge:true},
   {n:"Wiggle Worm",p:"wigglefloor",c:"dance",q:1,s:45,i:"Wiggle every single part of you, head to toes!",surge:true},
   {n:"Robot Dance",p:"robot",c:"dance",q:1,s:45,t:0.85,i:"Move stiff and blocky like a robot!"},
   {n:"Ball Slams",p:"squatjump",c:"medball",q:3,s:30,i:"Lift the ball up high, then SLAM it to the ground, go!",surge:true},
   {n:"Ball Squat & Press",p:"squat",c:"medball",q:2,s:35,i:"Squat low with the ball, stand and push it up high!"},
   {n:"Ball Twists",p:"linehop",c:"medball",q:2,s:35,i:"Hold the ball and twist side to side, tap the floor each side!"},
-  {n:"Ball Throws",p:"box",c:"medball",q:3,s:35,i:"Throw the ball forward, run and grab it, bring it back!"},
-  {n:"Ball Circles",p:"spin",c:"medball",q:1,s:35,i:"Circle the ball around your head, one way, then the other!"},
   {n:"Ball Long Jump",p:"longjump",c:"medball",q:3,s:45,i:"Squat low with the ball, then JUMP forward and throw it out, land soft, go get it! About 5 big throws."},
   {n:"Ball Rocket Jump",p:"rocketjump",c:"medball",q:3,s:45,i:"Ball down low, then JUMP and shoot it up high like a rocket, watch it land, go get it! About 5 big throws."},
 ];
+
+/* ---------- golden wildcard moves ----------
+   Secret jackpot moves that live OUTSIDE the normal catalog: never in Browse, never in a
+   normal pack. Roughly 1 spin in 8 (maybeGoWild) swaps the revealed move for one of these,
+   dressed head-to-toe in gold. Each keeps a real category so every reveal machine, parent
+   filter, and pacing rule works unchanged. Not favoritable: state.favs only keeps EX names. */
+const WILD_COL=["#FFB100","#FFD23E"];
+const WILD=[
+  {n:"Rocket Blastoff",p:"rocketjump",c:"jump",q:3,s:30,i:"Crouch down small… then BLAST OFF! Jump up super high, about 8 big jumps!",wild:true},
+  {n:"Lightning Zoom",p:"cheetah",c:"cardio",q:3,s:25,t:1.25,i:"Run in place as fast as a lightning bolt, zoom zoom zoom!",surge:true,wild:true},
+  {n:"Superhero Fly",p:"superman",c:"strength",q:1,s:25,i:"On your belly, arms out front, fly like a superhero saving the day!",wild:true},
+  {n:"Dragon Crawl",p:"bear",c:"animal",q:2,s:40,i:"Crawl big and mighty like a golden dragon guarding its treasure!",wild:true},
+  {n:"Gold Statue",p:"tree",c:"balance",q:1,s:30,i:"Freeze like a golden statue! Pick your coolest pose and hold super still!",wild:true},
+];
+const colOfEx=ex=>ex.wild?WILD_COL:colOf(ex.c);
+const catLabelEx=ex=>ex.wild?"WILD MOVE!":CATS[ex.c].label;
 
 const C = 2 * Math.PI * 95;
 
@@ -1290,6 +1314,7 @@ function beep(kind,arg){
   else if(kind==="surge"){[523,698,880].forEach((f,i)=>setTimeout(()=>tone(f,0.1,"square",0.2),i*60));setTimeout(()=>tone(1047,0.12,"square",0.18),190);}                       /* FASTER! — rising rev */
   else if(kind==="surge2"){[659,880,1047,1319,1568].forEach((f,i)=>setTimeout(()=>tone(f,0.08,"square",0.2),i*55));setTimeout(()=>tone(1760,0.28,"triangle",0.22),300);}        /* TURBO!! — higher & bigger */
   else if(kind==="jackpot"){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,0.07,"square",0.18),i*55));setTimeout(()=>tone(1318,0.34,"triangle",0.24),250);setTimeout(()=>beep("sparkle"),300);}  /* spin landing payoff */
+  else if(kind==="wild"){[659,831,988,1319].forEach((f,i)=>setTimeout(()=>tone(f,0.09,"triangle",0.22),i*75));setTimeout(()=>tone(1661,0.4,"triangle",0.26),330);setTimeout(()=>beep("sparkle"),380);setTimeout(()=>beep("sparkle"),520);}  /* golden wildcard fanfare, brighter than jackpot */
   else if(kind==="ding"){tone(700,0.1,"triangle",0.2);setTimeout(()=>tone(1050,0.14,"triangle",0.2),90);}
   else if(kind==="reel")tone(arg||(500+Math.random()*250),0.04,"square",0.08);
   else if(kind==="win"){[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f,0.2,"triangle",0.22),i*110));}
@@ -1469,19 +1494,34 @@ const REVEAL_TEXT={ reel:["Mixing your moves…","What will you get?"], wheel:["
   box:["Shake the box!","What's hiding inside?"], claw:["Grab a prize!","Which one will it catch?"],
   rocket:["Ready to launch!","Counting down…"], dice:["Roll the dice!","Which side will it land on?"] };
 function setSpinText(k){ const t=REVEAL_TEXT[k]||REVEAL_TEXT.reel; $("spinTitle").textContent=t[0]; $("spinSub").textContent=t[1]; }
-/* the shared landing beat: payoff sound + confetti, then on to the pack screen */
-function landReveal(rm){ beep("jackpot"); buzz([50,40,80]);
-  if(!rm)miniConfetti();
-  setTimeout(showPack, rm?320:880); } /* hold on the landed result a beat before the pack screen */
+/* the shared landing beat: payoff sound + confetti, then on to the pack screen.
+   A golden wildcard gets the bigger everything: fanfare, confetti, longer hold. */
+function landReveal(rm){ const wild=!!(state.pack[0]&&state.pack[0].wild);
+  beep(wild?"wild":"jackpot"); buzz(wild?[60,40,60,40,120]:[50,40,80]);
+  if(!rm)(wild?bigConfetti:miniConfetti)();
+  setTimeout(showPack, rm?320:(wild?1150:880)); } /* hold on the landed result a beat before the pack screen */
 /* idempotent finisher + auto safety net; each animator also points spinSkip at its own fast-finish */
 function spinFinisher(land,safetyMs){ let done=false;
   const fin=()=>{ if(done)return; done=true; clearTimeout(safety); land(); };
   const safety=setTimeout(fin,safetyMs); return fin; }
 
+/* roughly 1 spin in 8 the reveal comes up golden: pack[0] becomes a secret wildcard.
+   Candidates still respect the pack rules (no duplicate pose anywhere in the pack, no
+   same-category or double-vigorous neighbor) so the gold move never breaks pacing. */
+function maybeGoWild(pack){
+  if(!pack.length||Math.random()>=0.125)return;
+  const nxt=pack[1];
+  const cands=WILD.filter(w=>
+    !pack.some((p,j)=>j>0&&p.p===w.p)&&
+    (!nxt||(w.c!==nxt.c&&!(w.q===3&&nxt.q===3))));
+  if(cands.length)pack[0]=pick(cands);
+}
+
 function startSpin(){
   if(spinning)return; spinning=true;            /* re-entry guard: excited double-taps can't stack two reveals */
   ensureAudio(); stopFig(); stopConfetti();     /* clear any lingering Done-screen confetti before the next reveal */
   state.pack=makePack(state.count||5);
+  maybeGoWild(state.pack);
   justFinished=false;                           /* fresh session — cancel any pending home-tally bump */
   $("spinStage").innerHTML="";
   show("spin");
@@ -1496,11 +1536,11 @@ function doSpin(){
   const target=state.pack[0], strip=$("reelStrip"), fpool=activeEX(), fillers=[];
   for(let i=0;i<22;i++)fillers.push(fpool[Math.floor(Math.random()*fpool.length)]);
   fillers.push(target);
-  fillers.forEach(ex=>{ const col=colOf(ex.c);
+  fillers.forEach(ex=>{ const col=colOfEx(ex);
     const item=document.createElement("div");item.className="reel-item";
     const cv=document.createElement("canvas");cv.className="fig";cv.width=cv.height=FIG_S;item.appendChild(cv);
     const nm=document.createElement("div");nm.className="nm";nm.textContent=ex.n;item.appendChild(nm);
-    const cat=document.createElement("div");cat.className="reel-cat";cat.textContent=CATS[ex.c].label;cat.style.background=gradOf(col);item.appendChild(cat);
+    const cat=document.createElement("div");cat.className="reel-cat";cat.textContent=catLabelEx(ex);cat.style.background=gradOf(col);item.appendChild(cat);
     strip.appendChild(item);
     figFillLerp(cv,ex.p,col[0],Math.random()); /* varied pose so the whirring strip looks alive */
   });
@@ -1552,7 +1592,7 @@ function doPlinko(){
   const box=document.createElement("div"); box.className="plinko";
   const cv=document.createElement("canvas"); box.appendChild(cv); stage.appendChild(box);
   const W=cv.clientWidth||280, H=Math.round(W*0.8); cv.width=W; cv.height=H;
-  const g=cv.getContext("2d"), col=colOf(state.pack[0].c), keys=Object.keys(CATS);
+  const g=cv.getContext("2d"), col=colOfEx(state.pack[0]), keys=Object.keys(CATS);
   /* slots are decorative, NOT category-mapped: a fixed 5 bins, one (ti) painted the winning
      move's colour and the rest random — don't "fix" this to track CATS like the wheel does. */
   const SLOTS=5, slotW=W/SLOTS, ti=Math.floor(Math.random()*SLOTS), slotCols=[];
@@ -1588,7 +1628,7 @@ function doFlip(){
   const rm=reduceMotion(); setSpinText("flip");
   const stage=$("spinStage");
   const row=document.createElement("div"); row.className="flip-row"; const cards=[];
-  state.pack.forEach((ex,i)=>{ const col=colOf(ex.c);
+  state.pack.forEach((ex,i)=>{ const col=colOfEx(ex);
     const card=document.createElement("div"); card.className="flip-card"+(rm?"":" dealin"); card.style.animationDelay=Math.min(i*0.06,0.5)+"s";
     const inner=document.createElement("div"); inner.className="flip-inner";
     const back=document.createElement("div"); back.className="flip-face flip-back"; back.innerHTML=BOLT_MINI;
@@ -1609,12 +1649,12 @@ function doFlip(){
 }
 
 /* the winning move card that pops out of the box / claw / rocket machines */
-function prizeCard(ex){ const col=colOf(ex.c);
-  const pz=document.createElement("div"); pz.className="prize";
+function prizeCard(ex){ const col=colOfEx(ex);
+  const pz=document.createElement("div"); pz.className="prize"+(ex.wild?" gold":"");
   const tile=document.createElement("div"); tile.className="prize-tile"; tile.style.background=gradOf(col);
   const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; tile.appendChild(cv);
   const nm=document.createElement("div"); nm.className="prize-nm"; nm.textContent=ex.n;
-  const cat=document.createElement("div"); cat.className="prize-cat"; cat.textContent=CATS[ex.c].label; cat.style.background=gradOf(col);
+  const cat=document.createElement("div"); cat.className="prize-cat"; cat.textContent=catLabelEx(ex); cat.style.background=gradOf(col);
   pz.appendChild(tile); pz.appendChild(nm); pz.appendChild(cat);
   figFill(cv,ex.p,"#FFFFFF"); return pz; }
 
@@ -1656,7 +1696,7 @@ function doClaw(){
   const gw=glass.clientWidth||286, gh=glass.clientHeight||250;
   const N=5, ti=Math.floor(Math.random()*N), keys=Object.keys(CATS), caps=[], pool=activeEX();
   for(let i=0;i<N;i++){
-    const isT=i===ti, ex=isT?target:pick(pool), col=isT?colOf(target.c):colOf(keys[Math.floor(Math.random()*keys.length)]);
+    const isT=i===ti, ex=isT?target:pick(pool), col=isT?colOfEx(target):colOf(keys[Math.floor(Math.random()*keys.length)]);
     const cap=document.createElement("div"); cap.className="claw-cap"+(rm?"":" dealin");
     cap.style.background="linear-gradient(180deg,"+col[0]+" 0 52%,#FFFFFF 52%)";
     cap.style.left=(gw*(i+0.5)/N-23)+"px"; cap.style.bottom=(6+(i%2)*8)+"px";
@@ -1734,7 +1774,7 @@ function doRocket(){
 /* ---- dice roll: a 3D die tumbles in and lands on your move ---- */
 function doDice(){
   const rm=reduceMotion(); setSpinText("dice");
-  const stage=$("spinStage"), target=state.pack[0], col=colOf(target.c);
+  const stage=$("spinStage"), target=state.pack[0], col=colOfEx(target);
   const wrap=document.createElement("div"); wrap.className="dice-wrap";
   wrap.innerHTML='<div class="dice-shadow"></div>';
   const hop=document.createElement("div"); hop.className="dice-hop";
@@ -1783,15 +1823,17 @@ function showPack(){
   const list=$("packList");list.innerHTML="";
   let totalSec=0;
   state.pack.forEach((ex,idx)=>{
-    const sec=exSecs(ex);totalSec+=sec+restSecs();
-    const col=colOf(ex.c);
-    const card=document.createElement("div");card.className="pcard";card.style.animationDelay=Math.min(idx*0.045,0.7)+"s";
+    /* the first interval is the short GET READY (capped at 8s in play()), not a full rest */
+    const sec=exSecs(ex);totalSec+=sec+(idx===0?Math.min(restSecs(),8):restSecs());
+    const col=colOfEx(ex);
+    const card=document.createElement("div");card.className="pcard"+(ex.wild?" gold":"");card.style.animationDelay=Math.min(idx*0.045,0.7)+"s";
     const num=document.createElement("div");num.className="pnum";num.textContent=idx+1;
     const tile=document.createElement("div");tile.className="pemo";tile.style.background=gradOf(col);
     const cv=document.createElement("canvas");cv.className="fig";cv.width=cv.height=FIG_S;tile.appendChild(cv);
     const txt=document.createElement("div");txt.className="ptxt";
     txt.innerHTML='<div class="pnm"></div><div class="pin"></div>';
     txt.querySelector(".pnm").textContent=ex.n; txt.querySelector(".pin").textContent=ex.i;
+    if(ex.wild){const tag=document.createElement("span");tag.className="wildtag";tag.textContent="WILD";txt.querySelector(".pnm").prepend(tag);}
     const dur=document.createElement("div");dur.className="pdur";dur.textContent=sec+"s";
     dur.style.background=col[0]+"1A";dur.style.color=col[0];
     num.style.background=gradOf(col);num.style.color="#fff";
@@ -1840,7 +1882,7 @@ function goReady(i){
   $("rPhase").textContent = i===0 ? "GET READY" : "REST & WATCH";
   $("rCount").textContent=(i+1)+" / "+state.pack.length;
   $("rName").textContent=ex.n; $("rInstr").textContent=ex.i;
-  startFig($("rFig"), ex.p, colOf(ex.c)[0], ex.t);
+  startFig($("rFig"), ex.p, colOfEx(ex)[0], ex.t);
   const rn=$("rNum"); rn.textContent=""; rn.classList.remove("pop");
   const dur=(i===0)?Math.min(restSecs(),8):restSecs();
   lastTickSec=null;
@@ -1880,8 +1922,8 @@ function runExercise(i){
   figSpeed=1; clearTimeout(surgeTimer); $("wTimerWrap").classList.remove("surging"); /* reset surge */
   show("work"); updateDots();
   $("wCount").textContent=(i+1)+" / "+state.pack.length;
-  $("wName").textContent=ex.n; $("wInstr").textContent=ex.i; setPhase("Move!");
-  const col=colOf(ex.c);
+  $("wName").textContent=ex.n; $("wInstr").textContent=ex.i; setPhase(ex.wild?"WILD MOVE!":"Move!");
+  const col=colOfEx(ex);
   const grad=$("gWork"); grad.children[0].setAttribute("stop-color",col[0]); grad.children[1].setAttribute("stop-color",col[1]);
   $("ringWork").style.filter="drop-shadow(0 4px 10px "+col[0]+"44)";
   $("work").style.background="linear-gradient(180deg,"+col[0]+"14,rgba(255,255,255,0) 45%)";
@@ -1932,15 +1974,16 @@ function finishWorkout(){
 function buildRecap(){
   const row=$("doneRecap"); row.innerHTML="";
   state.pack.forEach((ex,i)=>{
-    const col=colOf(ex.c);
+    const col=colOfEx(ex);
     const card=document.createElement("div"); card.className="recap-card";
     card.style.animation="pop .4s cubic-bezier(.34,1.56,.64,1) "+(0.34+Math.min(i*0.05,0.5))+"s backwards"; /* fan in after the stats */
     const tile=document.createElement("div"); tile.className="rtile";
     tile.style.background=gradOf(col);
     const cv=document.createElement("canvas"); cv.className="fig"; cv.width=cv.height=FIG_S; tile.appendChild(cv);
     const nm=document.createElement("div"); nm.className="rnm"; nm.textContent=ex.n;
-    const st=makeStarBtn(ex.n,btn=>{ btn.classList.toggle("on",isFav(ex.n)); replay(card,"pop2"); });
-    card.appendChild(tile); card.appendChild(nm); card.appendChild(st);
+    card.appendChild(tile); card.appendChild(nm);
+    /* wildcards can't be starred: favorites only track catalog names, so the star would silently drop on reload */
+    if(!ex.wild){ const st=makeStarBtn(ex.n,btn=>{ btn.classList.toggle("on",isFav(ex.n)); replay(card,"pop2"); }); card.appendChild(st); }
     row.appendChild(card);
     figFill(cv,ex.p,"#FFFFFF");
   });
